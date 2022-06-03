@@ -19,4 +19,7 @@ db.once("open", function () {
   console.log("Connected successfully");
 });
 
+module.exports=db
+// create schema for collections within db
+
 
