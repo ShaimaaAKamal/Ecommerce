@@ -1,6 +1,7 @@
 const mongoose=require('mongoose');
 const bcrypt =require("bcryptjs");
 const validateEmail=require('../../Validator/EmailValidation')
+const validatePassword=require("../../Validator/passwordValidation")
 const uniqueValidator = require('mongoose-unique-validator');
 
 const SALT_WORK_FACTOR=10;
@@ -33,6 +34,8 @@ const userModelSchema=new Schema({
     password:{
         type:String,
         required:true,
+        validate: [validatePassword, 'Please fill a valid password'],
+        match: [/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,`Please fill a valid Password Minimum eight characters, at least one letter and one number`]
     },
     isAdmin:{
         type:Boolean,
