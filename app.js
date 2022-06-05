@@ -1,6 +1,8 @@
 const express=require('express');
 const app= express();
 const authRouter=require('./routes/Auth/auth');
+const passport=require('passport');
+require("./passport")(passport);
 
 app.use('/',authRouter);
 
