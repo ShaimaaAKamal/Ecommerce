@@ -1,5 +1,8 @@
 const express=require('express');
 const app= express();
+const authRouter=require('./routes/Auth/auth');
+
+app.use('/',authRouter);
 
 
 app.listen(3000,()=>{

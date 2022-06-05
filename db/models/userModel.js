@@ -24,7 +24,7 @@ const userModelSchema=new Schema({
         trim: true,
         unique:true,
         validate: [validateEmail, 'Please fill a valid email address'],
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+        // match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     phone:{
         type:Number,
@@ -35,7 +35,7 @@ const userModelSchema=new Schema({
         type:String,
         required:true,
         validate: [validatePassword, 'Please fill a valid password'],
-        match: [/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,`Please fill a valid Password Minimum eight characters, at least one letter and one number`]
+        // match: [/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,`Please fill a valid Password Minimum eight characters, at least one letter and one number`]
     },
     isAdmin:{
         type:Boolean,
