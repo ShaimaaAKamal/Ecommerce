@@ -2,8 +2,9 @@ const express=require('express');
 const app= express();
 const authRouter=require('./routes/Auth/auth');
 const passport=require('passport');
+require('./db/dbConnection');
 require("./passport")(passport);
-
+app.use(express.json());
 app.use('/',authRouter);
 
 
