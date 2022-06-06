@@ -2,13 +2,14 @@ const express=require("express");
 const router=express.Router();
 const passport_authenticate_jwt=require('../../middleware/authenticate');
 const isAdmin=require('../../middleware/isAdmin')
-const {addProductController,getProductController}=require("../../controller/product/productController")
+const {addProductController,getProductsController,getSingleProductController,deleteSingleProductController}=require("../../controller/product/productController")
 
 
 
-router.post('/',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,addProductController)
-router.get('/',getProductController)
-
+router.post('/',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,addProductController);
+router.get('/',getProductsController);
+router.get('/:productId',getSingleProductController);
+router.delete('/:productId',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,deleteSingleProductController);
 
 
 
