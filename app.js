@@ -2,8 +2,11 @@ const express=require('express');
 const app= express();
 const authRouter=require('./routes/Auth/auth');
 const passport=require('passport');
+const cors= require('cors');
 require('./db/dbConnection');
 require("./passport")(passport);
+app.use(cors())
+
 app.use(passport.initialize());
 app.use(express.json());
 app.use('/',authRouter);
