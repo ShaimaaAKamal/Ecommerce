@@ -4,6 +4,7 @@ const authRouter=require('./routes/Auth/auth');
 const passport=require('passport');
 require('./db/dbConnection');
 require("./passport")(passport);
+app.use(passport.initialize());
 app.use(express.json());
 app.use('/',authRouter);
 

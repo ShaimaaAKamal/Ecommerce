@@ -1,8 +1,10 @@
 const express=require('express');
+const passport=require('passport');
 const router=express.Router();
 const generateJWT =require("../../helpers/jwtGeneration");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const User=require("../../db/models/userModel");
+const passport_authenticate_jwt=require('../../middleware/authenticate');
 
 
 
@@ -44,5 +46,11 @@ router.post('/register',async (req,res)=>{
             return displayError(res,500,false,"Something went Wrong",err)}}  
 })
 
+router.get('/profile' , passport_authenticate_jwt((req,res)=>{
+    const token=req.headers.authorization;
+    const user=req.user;
+    return displayData(res,200,true,"User has been successfully Retreived",{user,token});
+
+}))
 
 module.exports=router;
