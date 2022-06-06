@@ -1,6 +1,7 @@
 const express=require('express');
 const app= express();
 const authRouter=require('./routes/Auth/auth');
+const productRouter=require("./routes/product/product");
 const passport=require('passport');
 const cors= require('cors');
 require('./db/dbConnection');
@@ -11,6 +12,7 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false}))
 app.use('/',authRouter);
+app.use('/',productRouter);
 
 
 app.listen(3000,()=>{
