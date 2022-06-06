@@ -12,7 +12,7 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false}))
 app.use('/',authRouter);
-app.use('/',productRouter);
+app.use('/products',productRouter);
 
 
 app.listen(3000,()=>{
