@@ -50,13 +50,21 @@ const profileController = passport_authenticate_jwt((req,res,next)=>{
 
 })
 
-const getAllUsersController= passport_authenticate_jwt(async(req,res,next)=>{
-   if(req.user.isAdmin) {
-      const users=await User.find({isAdmin:false});
-      if(users)   return displayData(res,200,true,"Users has been successfully Retreived",{users});
-      else   return displayCustomError(res,401,false,"There are no users exist")
-   }
-   else  return displayCustomError(res,403,false,"User is unauthorized");
-})
+// const getAllUsersController= passport_authenticate_jwt(async(req,res,next)=>{
+//    if(req.user.isAdmin) {
+//       const users=await User.find({isAdmin:false});
+//       if(users)   return displayData(res,200,true,"Users has been successfully Retreived",{users});
+//       else   return displayCustomError(res,401,false,"There are no users exist")
+//    }
+//    else  return displayCustomError(res,403,false,"User is unauthorized");
+// })
+
+const getAllUsersController= async(req,res)=>{
+       const users=await User.find({isAdmin:false});
+       if(users)   return displayData(res,200,true,"Users has been successfully Retreived",{users});
+       else   return displayCustomError(res,401,false,"There are no users exist")
+    
+ }
+
 
 module.exports={loginController,registerController,profileController,getAllUsersController}
