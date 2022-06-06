@@ -1,4 +1,5 @@
 const passport=require('passport');
+
 const {displayCustomError,displayError}=require('../helpers/display');
 
 const  passport_authenticate_jwt= (callback) => {
@@ -13,5 +14,7 @@ const  passport_authenticate_jwt= (callback) => {
 
 	return hack
 }
+
+
 
 module.exports=passport_authenticate_jwt
