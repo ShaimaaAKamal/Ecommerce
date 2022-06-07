@@ -3,6 +3,7 @@ const app= express();
 const authRouter=require('./routes/Auth/auth');
 const productRouter=require("./routes/product/product");
 const brandRouter=require("./routes/brand/brand");
+const categoryRouter=require("./routes/category/category");
 const passport=require('passport');
 const cors= require('cors');
 require('./db/dbConnection');
@@ -15,6 +16,8 @@ app.use(express.urlencoded({ extended: false}))
 app.use('/',authRouter);
 app.use('/products',productRouter);
 app.use('/brands',brandRouter);
+app.use('/categories',categoryRouter);
+
 
 
 
