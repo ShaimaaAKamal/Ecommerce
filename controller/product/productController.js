@@ -55,7 +55,6 @@ const updateSingleProductController=async (req,res) => {
         try{
         const id=req.params.productId;
         const product=await Product.findOneAndUpdate({_id:id},req.body,{new:true});
-        console.log(product)
         if(product.length != 0) return displayData(res,200,true,"Product has been successfully updated",{product});
         else return displayCustomError(res,404,false,"There is no such a product exists")
     }catch(err){

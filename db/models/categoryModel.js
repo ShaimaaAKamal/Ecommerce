@@ -11,7 +11,7 @@ const categoryModelSchema=new Schema({
         required:[true, "can't be blank"],
         lowercase:true,
         trim:true,
-        index:true
+        index:true,
     },
     images:[{
         data:Buffer,

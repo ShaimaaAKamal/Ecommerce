@@ -11,7 +11,8 @@ const brandModelSchema=new Schema({
         required:[true, "can't be blank"],
         lowercase:true,
         trim:true,
-        index:true
+        index:true,
+        unique:true
     },
     images:[{
         data:Buffer,
@@ -25,6 +26,7 @@ const brandModelSchema=new Schema({
     ]
 },{timestamps:true});
 
+brandModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
 const brandModel=mongoose.model('brandModel',brandModelSchema);
 
