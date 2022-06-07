@@ -51,9 +51,16 @@ const profileController = passport_authenticate_jwt((req,res,next)=>{
 })
 
 const getAllUsersController= async(req,res)=>{
-       const users=await User.find({isAdmin:false});
-       if(users)   return displayData(res,200,true,"Users has been successfully Retreived",{users});
-       else   return displayCustomError(res,401,false,"There are no users exist")
+     try{
+         let msg;
+        const users=await User.find({isAdmin:false});
+        if(users.length != 0 )   msg="Users has been successfully Retreived"; 
+        else  msg="There are no users exist";  
+        return displayData(res,200,true,msg,{users});
+     }
+     catch(err){
+        return displayError(res,500,false,"Something went Wrong",err) 
+     }
     
  }
 
