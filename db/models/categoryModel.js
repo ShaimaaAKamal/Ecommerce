@@ -12,6 +12,7 @@ const categoryModelSchema=new Schema({
         lowercase:true,
         trim:true,
         index:true,
+        unique:true
     },
     images:[{
         data:Buffer,
@@ -24,6 +25,8 @@ const categoryModelSchema=new Schema({
     }
     ]
 },{timestamps:true});
+
+categoryModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
 
 const categoryModel=mongoose.model('categoryModel',categoryModelSchema);
