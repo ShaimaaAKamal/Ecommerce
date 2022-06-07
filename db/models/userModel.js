@@ -40,6 +40,11 @@ const userModelSchema=new Schema({
     isAdmin:{
         type:Boolean,
         default:false
+    },
+    status:{
+        type:String,
+        enum:['active','deactive','suspened'],
+        default:"active"
     }
 },{timestamps:true});
 
