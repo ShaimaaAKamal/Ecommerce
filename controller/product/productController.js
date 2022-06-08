@@ -1,5 +1,5 @@
 const Product=require("../../db/models/productModel");
-const {displayCustomError,displayError,displayData,displayProduct}=require("../../helpers/display");
+const {displayCustomError,displayError,displayData,displayProduct,displayProducts}=require("../../helpers/display");
 
 
 const addProductController=async (req,res) =>{
@@ -8,7 +8,7 @@ const addProductController=async (req,res) =>{
     } 
     else{
         try{
-          let product = await Product.create(req.body)
+          let product = await Product.create(req.body);
           return displayData(res,200,true,"product has been successfully added",{product});
         }
         catch(err){
@@ -17,8 +17,9 @@ const addProductController=async (req,res) =>{
 
 const getProductsController=async (req,res) => {
     try{let msg;
-        const products=await Product.find();
-        if(products.length !=0)     msg="Products has been successfully Retreived";
+        let products=await Product.find().populate('category');
+        
+        if(products.length !=0)     {msg="Products has been successfully Retreived"; products=displayProducts(products);}
         else  msg ="There are no products exist"; 
         return displayData(res,200,true,msg,{products});
     }
@@ -34,15 +35,14 @@ const getSingleProductController= async (req,res) =>{
         if(product.length != 0) { let newproduct=displayProduct(product);  return displayData(res,200,true,"Product has been successfully retrieved",{product:newproduct});}
         else return displayCustomError(res,404,false,"There are no products exist")
     }catch(err){
-        console.log(err)
         return displayError(res,500,false,"Something went Wrong",err)
     }}  
     
 const deleteSingleProductController=async (req,res)=>{
        const id=req.params.productId;
     try{
-        const product=await Product.findOneAndDelete({_id:id});
-        if(product) return displayData(res,200,true,"Product has been successfully deleted",{product});
+        const product=await Product.findOneAndDelete({_id:id}).populate('category');
+        if(product) {let newproduct=displayProduct(product); return displayData(res,200,true,"Product has been successfully deleted",{product:newproduct});}
         else return displayCustomError(res,404,false,"There are no such a product exist")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)
@@ -69,8 +69,8 @@ const searchController = async (req,res) =>{
     } 
     else{
         try{
-        const products=await Product.find({productname:req.body.productname});
-        if(products.length != 0) return displayData(res,200,true,"Product has been successfully retreived",{products});
+        let products=await Product.find({productname:req.body.productname}).populate('category');
+        if(products.length != 0) {products=displayProducts(products); return displayData(res,200,true,"Product has been successfully retreived",{products});}
         else return displayCustomError(res,404,false,"There is no such a product exists")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)

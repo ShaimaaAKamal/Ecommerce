@@ -33,8 +33,15 @@ const displayProduct = (product)=>{
 
 }
 
+const displayProducts=(products)=>{
+    console.log(products);
+    let newProducts=products.map(entry => displayProduct(entry));
+    return newProducts;
+}
+
 
 module.exports.displayCustomError=displayCustomError;
 module.exports.displayError=displayError;
 module.exports.displayData=displayData;
 module.exports.displayProduct=displayProduct;
+module.exports.displayProducts=displayProducts;
