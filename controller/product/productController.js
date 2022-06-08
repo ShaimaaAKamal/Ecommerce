@@ -31,7 +31,7 @@ const getSingleProductController= async (req,res) =>{
     const id=req.params.productId;
     try{
         let product=await Product.findOne({_id:id}).populate('category');
-        if(product.length != 0) { newproduct=displayProduct(product);  return displayData(res,200,true,"Product has been successfully retrieved",{product:newproduct});}
+        if(product.length != 0) { let newproduct=displayProduct(product);  return displayData(res,200,true,"Product has been successfully retrieved",{product:newproduct});}
         else return displayCustomError(res,404,false,"There are no products exist")
     }catch(err){
         console.log(err)
@@ -55,8 +55,8 @@ const updateSingleProductController=async (req,res) => {
     else{
         try{
         const id=req.params.productId;
-        const product=await Product.findOneAndUpdate({_id:id},req.body,{new:true});
-        if(product.length != 0) return displayData(res,200,true,"Product has been successfully updated",{product});
+        const product=await Product.findOneAndUpdate({_id:id},req.body,{new:true}).populate('category');
+        if(product) { let newproduct=displayProduct(product); return displayData(res,200,true,"Product has been successfully updated",{product:newproduct});}
         else return displayCustomError(res,404,false,"There is no such a product exists")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)
