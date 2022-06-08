@@ -8,8 +8,8 @@ const addCategoryController=async (req,res) =>{
     } 
     else{
         try{
-          let Category = await Category.create(req.body)
-          return displayData(res,200,true,"Category has been successfully added",{Category});
+          let category = await Category.create(req.body)
+          return displayData(res,200,true,"Category has been successfully added",{category});
         }
         catch(err){
             return displayError(res,500,false,"Something went Wrong",err)}} 
@@ -30,8 +30,8 @@ const getCategorysController=async (req,res) => {
 const getSingleCategoryController= async (req,res) =>{
     const id=req.params.categoryId;
     try{
-        const Category=await Category.find({_id:id});
-        if(Category.length != 0) return displayData(res,200,true,"Category has been successfully retrieved",{Category});
+        const category=await Category.find({_id:id});
+        if(category.length != 0) return displayData(res,200,true,"Category has been successfully retrieved",{category});
         else return displayCustomError(res,404,false,"There are no such a Category exist")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)
@@ -42,8 +42,8 @@ const getSingleCategoryController= async (req,res) =>{
 const deleteSingleCategoryController=async (req,res)=>{
        const id=req.params.categoryId;
     try{
-        const Category=await Category.findOneAndDelete({_id:id});
-        if(Category) return displayData(res,200,true,"Category has been successfully deleted",{Category});
+        const category=await Category.findOneAndDelete({_id:id});
+        if(category) return displayData(res,200,true,"Category has been successfully deleted",{category});
         else return displayCustomError(res,404,false,"There are no such a Category exist")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)
@@ -56,8 +56,8 @@ const updateSingleCategoryController=async (req,res) => {
     else{
         try{
         const id=req.params.categoryId;
-        const Category=await Category.findOneAndUpdate({_id:id},req.body,{new:true});
-        if( Category.length != 0) return displayData(res,200,true,"Category has been successfully updated",{Category});
+        const category=await Category.findOneAndUpdate({_id:id},req.body,{new:true});
+        if( category.length != 0) return displayData(res,200,true,"Category has been successfully updated",{category});
         else return displayCustomError(res,404,false,"There is no such a Category exists")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)

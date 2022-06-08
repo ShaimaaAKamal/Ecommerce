@@ -11,7 +11,7 @@ const loginController = async (req,res)=>{
        return displayCustomError(res,400,false,"there are a missing fields")} 
 
     else{
-        const user =await User.findOne({email:req.body.email})
+        const user =await User.findOne({username:req.body.username})
         if(!user){
             return displayCustomError(res,401,false,"this user is not exist")
         }

@@ -16,7 +16,8 @@ const userModelSchema=new Schema({
         lowercase:true,
         trim:true,
         match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
-        index:true
+        index:true,
+        unique:true
     },
     email:{
         type:String,
