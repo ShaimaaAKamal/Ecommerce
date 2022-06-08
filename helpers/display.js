@@ -22,7 +22,19 @@ const  displayData=(res,code,succ,msg,data)=>{
        })
 }
 
+const displayProduct = (product)=>{
+    let newProduct={};
+     Object.keys(product._doc).forEach((key)=>{
+     if(key == "createdAt" || key == "updatedAt") return;
+      else if (key == "category") newProduct[key]=product[key].name;
+      else newProduct[key]=product[key];
+    })
+    return newProduct;
+
+}
+
 
 module.exports.displayCustomError=displayCustomError;
 module.exports.displayError=displayError;
 module.exports.displayData=displayData;
+module.exports.displayProduct=displayProduct;
