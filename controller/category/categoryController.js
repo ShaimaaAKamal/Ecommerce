@@ -30,7 +30,7 @@ const getCategorysController=async (req,res) => {
 const getSingleCategoryController= async (req,res) =>{
     const id=req.params.categoryId;
     try{
-        const category=await Category.find({_id:id});
+        const category=await Category.find({_id:id}).populate('products');
         if(category.length != 0) return displayData(res,200,true,"Category has been successfully retrieved",{category});
         else return displayCustomError(res,404,false,"There are no such a Category exist")
     }catch(err){

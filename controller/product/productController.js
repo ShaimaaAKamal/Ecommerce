@@ -1,4 +1,6 @@
 const Product=require("../../db/models/productModel");
+const Category=require("../../db/models/categoryModel");
+
 const {displayCustomError,displayError,displayData,displayProduct,displayProducts}=require("../../helpers/display");
 
 
@@ -9,6 +11,11 @@ const addProductController=async (req,res) =>{
     else{
         try{
           let product = await Product.create(req.body);
+          if(product.category != undefined) {
+              let category=await Category.findById(product.category).exec();
+              category.products.push(product);
+              category.save();
+          }
           return displayData(res,200,true,"product has been successfully added",{product});
         }
         catch(err){
@@ -42,7 +49,15 @@ const deleteSingleProductController=async (req,res)=>{
        const id=req.params.productId;
     try{
         const product=await Product.findOneAndDelete({_id:id}).populate('category');
-        if(product) {let newproduct=displayProduct(product); return displayData(res,200,true,"Product has been successfully deleted",{product:newproduct});}
+        if(product) {
+            let category=await Category.findById(product.category._id).exec();
+            for(let i=0; i<= category.products.length-1;i++){
+                if (category.products == product) Category.products.splice(i,1);
+            }
+            category.save();
+            let newproduct=displayProduct(product); 
+            return displayData(res,200,true,"Product has been successfully deleted",{product:newproduct});
+        }
         else return displayCustomError(res,404,false,"There are no such a product exist")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)
