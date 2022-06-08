@@ -62,5 +62,20 @@ const updateSingleProductController=async (req,res) => {
     }
 }}
 
+const searchController = async (req,res) =>{
+    if(Object.keys(req.body).length === 0){
+        return displayCustomError(res,400,false,"there are no key to search for");
+    } 
+    else{
+        try{
+        const product=await Product.find({productname:req.body.productname});
+        if(product.length != 0) return displayData(res,200,true,"Product has been successfully retreived",{product});
+        else return displayCustomError(res,404,false,"There is no such a product exists")
+    }catch(err){
+        return displayError(res,500,false,"Something went Wrong",err)
+    }
+}
+}
 
-module.exports={addProductController,getProductsController,getSingleProductController,deleteSingleProductController,updateSingleProductController}
+
+module.exports={addProductController,getProductsController,getSingleProductController,deleteSingleProductController,updateSingleProductController,searchController}
