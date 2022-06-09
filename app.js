@@ -4,6 +4,7 @@ const authRouter=require('./routes/Auth/auth');
 const productRouter=require("./routes/product/product");
 const brandRouter=require("./routes/brand/brand");
 const categoryRouter=require("./routes/category/category");
+const reviewRouter=require("./routes/review/review");
 const passport=require('passport');
 const cors= require('cors');
 require('./db/dbConnection');
@@ -17,6 +18,8 @@ app.use('/',authRouter);
 app.use('/products',productRouter);
 app.use('/brands',brandRouter);
 app.use('/categories',categoryRouter);
+app.use('/reviews',reviewRouter);
+
 
 
 
