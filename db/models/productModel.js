@@ -43,7 +43,10 @@ const productModelSchema=new Schema({
     brand:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'brandModel'
-    }
+    },
+    reviews:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'reviewModel'    }]
 },{timestamps:true});
 
 

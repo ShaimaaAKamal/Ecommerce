@@ -44,7 +44,15 @@ const userModelSchema=new Schema({
         type:String,
         enum:['active','deactive','suspened'],
         default:"active"
-    }
+    },
+    order:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'orderModel'
+    }],
+    reviews:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'reviewdModel'
+    }]
 },{timestamps:true});
 
 
