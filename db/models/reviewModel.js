@@ -18,11 +18,13 @@ const reviewModelSchema=new Schema({
     },
     user:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'userModel'        
+        ref:'userModel',
+        required:true    
     },
     product:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'productModel'  
+        ref:'productModel',
+        required:true 
     }
 },{timestamps:true});
 
@@ -31,6 +33,6 @@ reviewModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 const reviewModel=mongoose.model('reviewModel',reviewModelSchema);
 
 
-module.exports =brandModel;
+module.exports =reviewModel;
 
 
