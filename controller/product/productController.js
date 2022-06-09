@@ -11,11 +11,10 @@ const addProductController=async (req,res) =>{
     else{
         try{
           let product = await Product.create(req.body);
-          if(product.category != undefined) {
               let category=await Category.findById(product.category).exec();
               category.products.push(product);
-              category.save();
-          }
+              await category.save();
+          
           return displayData(res,200,true,"product has been successfully added",{product});
         }
         catch(err){
@@ -50,11 +49,6 @@ const deleteSingleProductController=async (req,res)=>{
     try{
         const product=await Product.findOneAndDelete({_id:id}).populate('category');
         if(product) {
-            let category=await Category.findById(product.category._id).exec();
-            for(let i=0; i<= category.products.length-1;i++){
-                if (category.products == product) Category.products.splice(i,1);
-            }
-            category.save();
             let newproduct=displayProduct(product); 
             return displayData(res,200,true,"Product has been successfully deleted",{product:newproduct});
         }
@@ -70,8 +64,21 @@ const updateSingleProductController=async (req,res) => {
     else{
         try{
         const id=req.params.productId;
-        const product=await Product.findOneAndUpdate({_id:id},req.body,{new:true}).populate('category');
-        if(product) { let newproduct=displayProduct(product); return displayData(res,200,true,"Product has been successfully updated",{product:newproduct});}
+        const oldProduct = await Product.findById(id).exec();
+        const product=await Product.findOneAndUpdate({_id:id},req.body,{new:true});
+        if(product) {
+             if((!(oldProduct.category).equals(product.category))){
+                let oldCategory=await Category.findById(oldProduct.category).exec();
+                let index=oldCategory.products.indexOf(oldProduct._id)
+                oldCategory.products.splice(index,1);
+                await oldCategory.save();
+                let newCategory=await Category.findById(product.category).populate('products').exec();
+                newCategory.products.push(product);
+                await newCategory.save();
+             }
+             let newproduct=displayProduct(product);
+             return displayData(res,200,true,"Product has been successfully updated",{product:newproduct});
+                    }
         else return displayCustomError(res,404,false,"There is no such a product exists")
     }catch(err){
         return displayError(res,500,false,"Something went Wrong",err)

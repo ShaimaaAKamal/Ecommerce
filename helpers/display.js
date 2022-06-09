@@ -34,7 +34,6 @@ const displayProduct = (product)=>{
 }
 
 const displayProducts=(products)=>{
-    console.log(products);
     let newProducts=products.map(entry => displayProduct(entry));
     return newProducts;
 }

@@ -17,7 +17,7 @@ const addCategoryController=async (req,res) =>{
 
 const getCategorysController=async (req,res) => {
     try{let msg;
-        const Categorys=await Category.find();
+        const Categorys=await Category.find().populate('products');
         if(Categorys.length !=0)     msg="Categorys has been successfully Retreived";
         else  msg ="There are no Categorys exist"; 
         return displayData(res,200,true,msg,{Categorys});
