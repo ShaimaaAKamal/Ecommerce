@@ -11,7 +11,8 @@ const loginController = async (req,res)=>{
        return displayCustomError(res,400,false,"there are a missing fields")} 
 
     else{
-        const user =await User.findOne({username:req.body.username})
+        try{
+            const user =await User.findOne({username:req.body.username})
         if(!user){
             return displayCustomError(res,401,false,"this user is not exist")
         }
@@ -26,7 +27,10 @@ const loginController = async (req,res)=>{
                 }
                 else{
                      const token=generateJWT(user).token;
-                     return displayData(res,200,true,"User has been successfully login",{user,token}); }})}}
+                     return displayData(res,200,true,"User has been successfully login",{user,token}); }})}
+        } catch(err){
+            return displayError(res,500,false,"Something went Wrong",err)
+        }}
 }
 
 const registerController= async (req,res)=>{
