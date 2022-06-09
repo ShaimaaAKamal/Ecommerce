@@ -6,7 +6,7 @@ const {addReviewController,getReviewsController,getSingleReviewController,delete
 
 
 router.post('/',passport_authenticate_jwt((req,res,next)=>{next()}),addReviewController);
-// router.get('/',getReviewsController);
+router.get('/',getReviewsController);
 // router.get('/:reviewId',getSingleReviewController);
 // router.delete('/:reviewId',passport_authenticate_jwt((req,res,next)=>{next()}),deleteSingleReviewController);
 // router.put('/:reviewId',passport_authenticate_jwt((req,res,next)=>{next()}),updateSingleReviewController);

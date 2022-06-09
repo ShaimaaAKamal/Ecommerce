@@ -64,5 +64,21 @@ const getAllUsersController= async(req,res)=>{
     
  }
 
+ const forgetPasswordController=async (req,res) => {
+    if(Object.keys(req.body).length === 0){
+        return displayCustomError(res,400,false,"You must enter you email")} 
+    else{
+         try{
+            const user=await User.findOne({email:req.body.email})
+            if(!user)   return displayCustomError(res,404,false,"There is no user related to that email");
+            else        return displayData(res,200,true,"User is already exist",{user:{email:user.email,status:user.status,_id:user._id}});
 
-module.exports={loginController,registerController,profileController,getAllUsersController}
+         }
+         catch(err){
+            return displayError(res,500,false,"Something went Wrong",err)
+         }        
+    }
+ }
+
+
+module.exports={loginController,registerController,profileController,getAllUsersController,forgetPasswordController}
