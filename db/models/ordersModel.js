@@ -33,16 +33,14 @@ const orderModelSchema=new Schema({
         type:String,
        required:true
     },
-    products:[
-    {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'producModel'
-    }
-    ],
     user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'userModel'
-    }
+    },
+    orderProducts:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'orderProductsModel'
+    }]
 },{timestamps:true});
 
 orderModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});

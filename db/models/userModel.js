@@ -58,6 +58,9 @@ const userModelSchema=new Schema({
 
 userModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
+
+
+
 userModelSchema.pre('save', async function save(next) {
     if (!this.isModified('password')) return next();
     try {
@@ -69,9 +72,6 @@ userModelSchema.pre('save', async function save(next) {
       return next(err);
     }
   });
-
- 
-
 
   userModelSchema.methods.comparePassword = function(password, done) {
     bcrypt.compare(password, this.password, function(err, isMatch) {
