@@ -61,6 +61,7 @@ userModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 userModelSchema.pre('save', async function save(next) {
     if (!this.isModified('password')) return next();
     try {
+      
       const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
       this.password = await bcrypt.hash(this.password, salt);
       return next();
@@ -75,15 +76,17 @@ userModelSchema.pre('save', async function save(next) {
   userModelSchema.methods.comparePassword = function(password, done) {
     bcrypt.compare(password, this.password, function(err, isMatch) {
         if (err) return done(err);
+        console.log(password);
+        console.log(this.password);
         done(null, isMatch);
     });
 };
 
 
-userModelSchema.methods.hashPassword =async  function(password) {
+userModelSchema.methods.hashPassword =async function(password) {
     try {
         const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-        this.password = await bcrypt.hash(this.password, salt);
+        this.password = await bcrypt.hash(password, salt);
         return this.password;
       } catch (err) {
         return err;

@@ -95,18 +95,47 @@ const getAllUsersController= async(req,res)=>{
         try{
             let user=await User.findById(userId).exec();
             if(user) {
-            let hashpassword=await user.hashPassword();
-            await user.updateOne({password:hashpassword},);
+            let hashpassword=await user.hashPassword(req.body.password);
+            await user.updateOne({password:hashpassword});
             let updatedUser=await User.findById(userId).exec();
             return displayData(res,200,true,"Password has been reset",{user:updatedUser});
         }
             else displayCustomError(res,404,false,"there is no such a user")  ;
         }catch(err){
-            console.log(err);
             return displayError(res,500,false,"Something went Wrong",err);
         }
      }
  }
 
+ const changePasswordController=async(req,res)=>{
+    const userId=req.query.userId;
+    if(!userId)  return displayCustomError(res,400,false,"UserId doesn't exists");
+    else if(Object.keys(req.body).length === 0){
+        return displayCustomError(res,400,false,"You must enter a password")}  
+    else{
+        try{
+            let user=await User.findById(userId).exec();
+            if(user) {
+                await user.comparePassword(req.body.oldPassword,async(err,isMatch)=>{
+                    if(err)
+                    {
+                        return displayError(res,500,false,"Something went Wrong",err)  
+                    }
+                    else if (!isMatch) {
+                        return displayCustomError(res,401,false,"Password doesn't match");
+                    }
+                    else{
+                        let hashpassword=await user.hashPassword(req.body.newPassword);
+                        await user.updateOne({password:hashpassword});
+                        let updatedUser=await User.findById(userId).exec();
+                        return displayData(res,200,true,"Password has been changed",{user:updatedUser});
+                          }})
+        }
+        else displayCustomError(res,404,false,"There is no such a user")  ;
+        }catch(err){
+            return displayError(res,500,false,"Something went Wrong",err);
+        }
+    }
+}
 
-module.exports={loginController,registerController,profileController,getAllUsersController,forgetPasswordController,resetPasswordController}
+module.exports={loginController,registerController,profileController,getAllUsersController,forgetPasswordController,resetPasswordController,changePasswordController}

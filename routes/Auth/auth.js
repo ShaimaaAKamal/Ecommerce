@@ -3,7 +3,7 @@ const passport_authenticate_jwt=require('../../middleware/authenticate');
 
 const router=express.Router();
 const isAdmin=require('../../middleware/isAdmin')
-const {loginController,registerController,profileController,getAllUsersController,forgetPasswordController,resetPasswordController}=require("../../controller/Auth/auth")
+const {loginController,registerController,profileController,getAllUsersController,forgetPasswordController,resetPasswordController,changePasswordController}=require("../../controller/Auth/auth")
 
 
 router.post('/login',loginController )
@@ -16,6 +16,8 @@ router.get('/users',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,
 
 router.post('/forgetPassword',forgetPasswordController)
 router.post('/resetPassword',resetPasswordController)
+router.post('/changePassword',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,changePasswordController)
+
 
 
 
