@@ -69,12 +69,25 @@ userModelSchema.pre('save', async function save(next) {
     }
   });
 
+ 
+
 
   userModelSchema.methods.comparePassword = function(password, done) {
     bcrypt.compare(password, this.password, function(err, isMatch) {
         if (err) return done(err);
         done(null, isMatch);
     });
+};
+
+
+userModelSchema.methods.hashPassword =async  function(password) {
+    try {
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+        this.password = await bcrypt.hash(this.password, salt);
+        return this.password;
+      } catch (err) {
+        return err;
+      }
 };
 
 const userModel=mongoose.model('userModel',userModelSchema);
