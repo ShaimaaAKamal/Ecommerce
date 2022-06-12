@@ -45,7 +45,7 @@ const userModelSchema=new Schema({
         enum:['active','deactive','suspened'],
         default:"active"
     },
-    order:[{
+    orders:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'orderModel'
     }],
@@ -76,8 +76,6 @@ userModelSchema.pre('save', async function save(next) {
   userModelSchema.methods.comparePassword = function(password, done) {
     bcrypt.compare(password, this.password, function(err, isMatch) {
         if (err) return done(err);
-        console.log(password);
-        console.log(this.password);
         done(null, isMatch);
     });
 };
