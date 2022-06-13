@@ -13,13 +13,13 @@ const orderModelSchema=new Schema({
     },
     status:{
         type:String,
-        enum:["processed","shipped","delivered","cancalled"],
-        default:"processed"
+        enum:["pending","in review","in progress","cancalled","on the way","delivered"],
+        default:"pending"
     },
     payment:{
          type:String,
          Required:true,
-         enum:["Cash on delivery" , "Master Card"]
+         enum:["Cash on delivery" , "Master Card" , "Credit Card"]
     },
     shippingAddress:{
        type:String,

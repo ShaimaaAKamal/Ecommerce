@@ -1,9 +1,10 @@
+const e = require("express");
 const Order=require("../../db/models/ordersModel");
 const Product=require("../../db/models/productModel");
 
 
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
-
+const upateOrderProducts=require("../../helpers/updateOrderProducts")
 
 const addOrderController=async (req,res) =>{
     if(Object.keys(req.body).length === 0){
@@ -14,30 +15,11 @@ const addOrderController=async (req,res) =>{
             const user=req.user._id
             if(products.length == 0) return displayCustomError(res,400,false,"You must send the order Products");
             else {
-            let totalQty=0;
-            let orderPrice=0;
-            let finalCount;
-            let nonAvailableProducts=[];
-            for (let entry of products){
-               const oldproduct=await Product.findById(entry.product)
-               finalCount=oldproduct.qty-entry.qty;
-               if(finalCount < 0) nonAvailableProducts.push({producId:entry.product , availablePieces:oldproduct.qty, productName:oldproduct.productname})
-            }
-            if(nonAvailableProducts.length != 0) return displayError(res,400,false,"Can't place order, some producst are not available",{nonAvailableProducts});
-            else{
-                 for(let entry of products){
-                    totalQty+=entry.qty;
-                    orderPrice+=entry.qty * entry.price    
-                    const oldproduct=await Product.findById(entry.product)
-                    finalCount=oldproduct.qty-entry.qty;
-                    if(finalCount == 0)
-                      await Product.updateOne({_id:entry.product},{qty:finalCount,availability:false}) 
-                    else   await Product.updateOne({_id:entry.product},{qty:finalCount})
-                 }
-                const orderData={shippingAddress,billingAddress,payment,user,orderProducts:products,totalQty,orderPrice};
+                let updateStatus= await   upateOrderProducts(0,0,products,"Can't place order, some producst are not available",res);
+                if(! updateStatus.status) return updateStatus.data;
+                const orderData={shippingAddress,billingAddress,payment,user,orderProducts:products,totalQty:updateStatus.data.totalQty,orderPrice:updateStatus.data.orderPrice};
                 const order=await Order.create(orderData);
-                return displayData(res,200,true,"order has been successfully placed",{order});
-                 }
+              return displayData(res,200,true,"order has been successfully placed",{order});     
             }
         }
         catch(err){
@@ -96,6 +78,72 @@ const deleteSingleOrderController=async (req,res)=>{
          return displayError(res,500,false,"Something went Wrong",err)
      }} 
 
+  const updateOrderProductsController=async (req,res) => {
+        if(Object.keys(req.body).length === 0 || !req.body.products){
+            return displayCustomError(res,400,false,"You must send Products");
+        } else { try{
+            const id=req.params.orderId;
+            const oldOrder = await Order.findById(id).exec();
+            if(oldOrder) {
+                if((req.user._id).equals(oldOrder.user)){ 
+                    let nonAvailableProducts=[]
+                    let updatedProducts=[];
+                   for (prod of req.body.products){
+                       {
+                           let data={exits:false,qty:0,price:0};
 
+                           for(entry of oldOrder.orderProducts){
+                               if((entry.product).equals(prod.product)) { 
+                                data={exists:true,qty:entry.qty,price:entry.price};break; }
+                           }
+                           if(data.exists){
+                               let diffqty=data.qty - prod.qty;
+                                if(diffqty > 0)
+                                    updatedProducts.push({productId:prod.product,addedQty:diffqty,qty:prod.qty})
+                                else if(diffqty < 0){
+                                    let product=await Product.findById(prod.product).exec();
+                                    let finalQty=product.qty - (-1 *diffqty);
+                                    if(finalQty < 0 ) nonAvailableProducts.push({producId:prod.product ,availablePieces:product.qty, productName:product.productname});
+                                    else updatedProducts.push({productId:prod.product,finalqty:finalQty,qty:prod.qty})
+                                    }}
+                           else  { 
+                               let product=await Product.findById(prod.product).exec();
+                                     let finalQty=product.qty - prod.qty;
+                                     if(finalQty < 0 ) nonAvailableProducts.push({producId:prod.product ,availablePieces:product.qty, productName:product.productname});
+                                     else updatedProducts.push({productId:prod.product,finalqty:finalQty,qty:prod.qty})}}}
+                        if(nonAvailableProducts.length != 0) return displayError(res,400,false,"Cant't update order, some products aren't avilable",{nonAvailableProducts})
+                        if(updatedProducts.length == 0 ) return displayCustomError(res,400,false,"There new products to be updated");
+                        for(entry of updatedProducts){
+                            let product=await Product.findById(entry.productId).exec();
+                            if (entry.addedQty) await Product.updateOne({_id:entry.productId},{qty:(product.qty+entry.addedQty)});
+                            else if (entry.finalqty && entry.finalqty == 0 ) await Product.updateOne({_id:entry.productId},{qty:entry.finalqty,availability:false});
+                            else if (entry.finalqty && entry.finalqty > 0 ) await Product.updateOne({_id:entry.productId},{qty:entry.finalqty});
+                        }
+                   let order= await Order.findByIdAndUpdate({_id:id},{orderProducts:req.body.products},{new:true});
+                   return displayData(res,200,true,"Order has been successfully updated",{order});
 
-module.exports={addOrderController,getSingleOrderController,getOrdersController,deleteSingleOrderController}
+                    }
+             else return displayCustomError(res,401,false,"You are unauthorized to perform that action");}
+            else return displayCustomError(res,404,false,"There is no such  order exists")
+        }catch(err){
+            console.log(err);
+            return displayError(res,500,false,"Something went Wrong",err)
+        }
+    }}
+
+const updateOrderStatusController=async (req,res)=>{
+    if(Object.keys(req.body).length === 0){
+                    return displayCustomError(res,400,false,"there are a missing fields");
+                } 
+    else{try{
+        const id=req.params.orderId;
+        let order = await Order.findOneAndUpdate({_id:id},{status:req.body.status},{new:true});
+        if(order) return displayData(res,200,true,"Order has been successfully updated",{order});
+        else return displayCustomError(res,404,false,"There is no such a order exists")
+        }catch(err){
+            return displayError(res,500,false,"Something went Wrong",err)
+        }
+    }
+}
+
+module.exports={addOrderController,getSingleOrderController,getOrdersController,deleteSingleOrderController,updateOrderStatusController,updateOrderProductsController}
