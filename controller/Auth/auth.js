@@ -60,14 +60,16 @@ const profileController = passport_authenticate_jwt((req,res,next)=>{
 const getAllUsersController= async(req,res)=>{
      try{
          let msg;
-        const users=await User.find({isAdmin:false}).populate("orders").populate("reviews");
+         let users;
+        if(req.query.status)  users=await User.find({isAdmin:false,status:req.query.status}).populate("orders").populate("reviews");
+        else if(req.query.username)  users=await User.find({isAdmin:false,username:req.query.username}).populate("orders").populate("reviews");
+        else  users=await User.find({isAdmin:false}).populate("orders").populate("reviews");
         if(users.length != 0 )   msg="Users has been successfully Retreived"; 
         else  msg="There are no users exist";  
         let newUsers=users.map(user=>  returnUsersDetails(user));
         return displayData(res,200,true,msg,{users:newUsers});
      }
      catch(err){
-         console.log(err);
         return displayError(res,500,false,"Something went Wrong",err) 
      }
     
@@ -141,4 +143,20 @@ const getAllUsersController= async(req,res)=>{
     }
 }
 
-module.exports={loginController,registerController,profileController,getAllUsersController,forgetPasswordController,resetPasswordController,changePasswordController}
+const updateUserStatus=async (req,res) =>{
+    if(Object.keys(req.body).length === 0 ||! req.body.status){
+        return displayCustomError(res,400,false,"You must send the new Status");
+    } 
+else{try{
+const id=req.params.userId;
+let user = await User.findOneAndUpdate({_id:id},{status:req.body.status},{new:true});
+if(user) return displayData(res,200,true,"user has been successfully updated",{user});
+else return displayCustomError(res,404,false,"There is no such  user exists")
+}catch(err){
+return displayError(res,500,false,"Something went Wrong",err)
+}
+}
+
+}
+
+module.exports={loginController,registerController,profileController,getAllUsersController,forgetPasswordController,resetPasswordController,changePasswordController,updateUserStatus}
