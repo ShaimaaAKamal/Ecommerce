@@ -16,7 +16,6 @@ router.put('/:orderId/Review',passport_authenticate_jwt((req,res,next)=>{next()}
 
 
 
-updateOrderProductsController
 
 
 module.exports=router;

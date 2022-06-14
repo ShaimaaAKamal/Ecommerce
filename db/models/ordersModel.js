@@ -57,11 +57,6 @@ orderModelSchema.pre('save', function(next) {
     next();
   });
 
-//   orderProducts:[{
-//     type:mongoose.Schema.Types.ObjectId,
-//     ref:'orderProductsModel'
-// }],
-
 const orderModel=mongoose.model('orderModel',orderModelSchema);
 
 

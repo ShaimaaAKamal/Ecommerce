@@ -51,7 +51,7 @@ const userModelSchema=new Schema({
     }],
     reviews:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'reviewdModel'
+        ref:'reviewModel'
     }]
 },{timestamps:true});
 

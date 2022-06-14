@@ -1,5 +1,5 @@
-const e = require("express");
 const Order=require("../../db/models/ordersModel");
+const User=require("../../db/models/userModel");
 const Product=require("../../db/models/productModel");
 
 
@@ -15,16 +15,20 @@ const addOrderController=async (req,res) =>{
             const user=req.user._id
             if(products.length == 0) return displayCustomError(res,400,false,"You must send the order Products");
             else {
-                let updateStatus= await   upateOrderProducts(0,0,products,"Can't place order, some producst are not available",res);
+                let addedProducts=products.filter(product => product.qty > 0 )
+                if(addedProducts.length == 0)  return displayCustomError(res,400,false,"There is no products to be ordered");
+                else{
+                    let updateStatus= await   upateOrderProducts(0,0,addedProducts,"Can't place order, some producst are not available",res);
                 if(! updateStatus.status) return updateStatus.data;
-                const orderData={shippingAddress,billingAddress,payment,user,orderProducts:products,totalQty:updateStatus.data.totalQty,orderPrice:updateStatus.data.orderPrice};
+                const orderData={shippingAddress,billingAddress,payment,user,orderProducts:addedProducts,totalQty:updateStatus.data.totalQty,orderPrice:updateStatus.data.orderPrice};
                 const order=await Order.create(orderData);
-              return displayData(res,200,true,"order has been successfully placed",{order});     
-            }
-        }
-        catch(err){
-            return displayError(res,500,false,"Something went Wrong",err);
-        }}}
+                if(order){
+                    let userAccount=await User.findById(user).exec();
+                    userAccount.orders.push(order);
+                    await User.updateOne({_id:user},{orders:userAccount.orders});
+                }
+                return displayData(res,200,true,"order has been successfully placed",{order});}}}
+        catch(err) {return displayError(res,500,false,"Something went Wrong",err);}}}
 
  const getOrdersController=async (req,res) => {
             try{let msg;
@@ -101,14 +105,12 @@ const deleteSingleOrderController=async (req,res)=>{
                                 if(diffqty > 0)
                                     updatedProducts.push({productId:prod.product,addedQty:diffqty,qty:prod.qty})
                                 else if(diffqty < 0){
-                                    console.log('there');
                                     let product=await Product.findById(prod.product).exec();
                                     let finalQty=product.qty - (-1 *diffqty);
                                     if(finalQty < 0 ) nonAvailableProducts.push({producId:prod.product ,availablePieces:product.qty, productName:product.productname});
                                     else updatedProducts.push({productId:prod.product,finalqty:finalQty,qty:prod.qty,diffqty:(-1*diffqty)})
                                     }}
                            else  {  
-                                    console.log('hi');
                                let   product=await Product.findById(prod.product).exec();
                                      let finalQty=product.qty - prod.qty;
                                      if(finalQty < 0 ) nonAvailableProducts.push({producId:prod.product ,availablePieces:product.qty, productName:product.productname});
@@ -133,7 +135,7 @@ const deleteSingleOrderController=async (req,res)=>{
                         }
                         }
                         if(oldOrder.totalQty < 0) oldOrder.totalQty=0;
-                        if( oldOrder.orderPrice)  oldOrder.orderPrice=0;
+                        if( oldOrder.orderPrice < 0)  oldOrder.orderPrice=0;
                    let order= await Order.findByIdAndUpdate({_id:id},{orderProducts:req.body.products,totalQty:oldOrder.totalQty,orderPrice:oldOrder.orderPrice},{new:true});
                    return displayData(res,200,true,"Order has been successfully updated",{order});
 

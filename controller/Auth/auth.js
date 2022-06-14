@@ -4,6 +4,7 @@ const generateJWT =require("../../helpers/jwtGeneration");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const User=require("../../db/models/userModel");
 const passport_authenticate_jwt=require('../../middleware/authenticate');
+const {returnUsersDetails}=require("../../helpers/userDisplay")
 
 
 
@@ -59,12 +60,14 @@ const profileController = passport_authenticate_jwt((req,res,next)=>{
 const getAllUsersController= async(req,res)=>{
      try{
          let msg;
-        const users=await User.find({isAdmin:false});
+        const users=await User.find({isAdmin:false}).populate("orders").populate("reviews");
         if(users.length != 0 )   msg="Users has been successfully Retreived"; 
         else  msg="There are no users exist";  
-        return displayData(res,200,true,msg,{users});
+        let newUsers=users.map(user=>  returnUsersDetails(user));
+        return displayData(res,200,true,msg,{users:newUsers});
      }
      catch(err){
+         console.log(err);
         return displayError(res,500,false,"Something went Wrong",err) 
      }
     
