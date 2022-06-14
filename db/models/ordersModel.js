@@ -48,6 +48,7 @@ const orderModelSchema=new Schema({
         price:{type:Number,required:true},
         qty:{type:Number,required:true}
     }],
+    review:String
 },{timestamps:true});
 
 orderModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});

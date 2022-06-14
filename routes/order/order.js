@@ -2,7 +2,7 @@ const express=require("express");
 const router=express.Router();
 const passport_authenticate_jwt=require('../../middleware/authenticate');
 const isAdmin=require('../../middleware/isAdmin')
-const {addOrderController,getOrdersController,getSingleOrderController,deleteSingleOrderController,updateOrderStatusController,updateOrderProductsController}=require("../../controller/order/orderController")
+const {addOrderController,getOrdersController,getSingleOrderController,deleteSingleOrderController,updateOrderStatusController,updateOrderProductsController,addOrderReviewController}=require("../../controller/order/orderController")
 
 
 
@@ -12,6 +12,8 @@ router.get('/:orderId',passport_authenticate_jwt((req,res,next)=>{next()}),getSi
 router.delete('/:orderId',passport_authenticate_jwt((req,res,next)=>{next()}),deleteSingleOrderController);
 router.put('/:orderId/updateStatus',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,updateOrderStatusController);
 router.put('/:orderId/updateProducts',passport_authenticate_jwt((req,res,next)=>{next()}),updateOrderProductsController);
+router.put('/:orderId/Review',passport_authenticate_jwt((req,res,next)=>{next()}),addOrderReviewController);
+
 
 
 updateOrderProductsController
