@@ -34,8 +34,17 @@ const addOrderController=async (req,res) =>{
             try{let msg;
                 let orders;
                 if(req.user.isAdmin)
-                orders=await Order.find().populate('user');
-                else    orders=await Order.find({user:req.user._id}).populate('user');
+                 { 
+                    if(req.query.status) orders=await Order.find({status:req.query.status}).populate('user');
+                    else if (req.query.username) {
+                        let user =await User.findOne({username:req.query.username})
+                        orders=await Order.find({user:user._id}).populate('user')}
+                    else  orders=await Order.find().populate('user');
+                 }                
+                else   {
+                    if(req.query.status) orders=await Order.find({status:req.query.status}).populate('user');
+                    else  orders=await Order.find({user:req.user._id}).populate('user');
+                } 
                 if(orders.length !=0)     {msg="orders has been successfully Retreived";}
                 else  msg ="There are no orders exist"; 
                 return displayData(res,200,true,msg,{orders});
