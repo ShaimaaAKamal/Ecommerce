@@ -48,12 +48,15 @@ const orderModelSchema=new Schema({
         price:{type:Number,required:true},
         qty:{type:Number,required:true}
     }],
-    review:String
+    review:String,
+    created:Date,
 },{timestamps:true});
 
 orderModelSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 orderModelSchema.pre('save', function(next) {
     this.code =  Date.now().toString(36) + Math.random().toString(36).substr(2);
+    let yourDate=new Date();
+    this.created=yourDate.toISOString().split('T')[0]
     next();
   });
 

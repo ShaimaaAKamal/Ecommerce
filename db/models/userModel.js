@@ -52,7 +52,8 @@ const userModelSchema=new Schema({
     reviews:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'reviewModel'
-    }]
+    }],
+    created:Date,
 },{timestamps:true});
 
 
@@ -67,6 +68,8 @@ userModelSchema.pre('save', async function save(next) {
       
       const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
       this.password = await bcrypt.hash(this.password, salt);
+      let yourDate=new Date();
+      this.created=yourDate.toISOString().split('T')[0]
       return next();
     } catch (err) {
       return next(err);
