@@ -37,8 +37,8 @@ const loginController = async (req,res)=>{
 
 const registerController= async (req,res)=>{
 
-    if(Object.keys(req.body).length === 0){
-        return displayCustomError(res,400,false,"there are a missing fields");
+    if(Object.keys(req.body).length === 0 || !req.body.username || !req.body.email || !req.body.phone || !req.body.password){
+        return displayCustomError(res,400,false,"You must enter a unique user's username,email,phone and password to register");
     } 
     else{
         try{
@@ -77,7 +77,7 @@ const getAllUsersController= async(req,res)=>{
  }
 
  const forgetPasswordController=async (req,res) => {
-    if(Object.keys(req.body).length === 0){
+    if(Object.keys(req.body).length === 0 || !req.body.email){
         return displayCustomError(res,400,false,"You must enter you email")} 
     else{
          try{
@@ -95,7 +95,7 @@ const getAllUsersController= async(req,res)=>{
  const resetPasswordController = async(req,res)=>{
      const userId=req.query.userId;
      if(!userId)  return displayCustomError(res,400,false,"UserId doesn't exists");
-     else  if(Object.keys(req.body).length === 0){
+     else  if(Object.keys(req.body).length === 0 || !req.body.passowrd){
         return displayCustomError(res,400,false,"You must enter a password")}  
         else{
         try{
@@ -116,7 +116,7 @@ const getAllUsersController= async(req,res)=>{
  const changePasswordController=async(req,res)=>{
     const userId=req.query.userId;
     if(!userId)  return displayCustomError(res,400,false,"UserId doesn't exists");
-    else if(Object.keys(req.body).length === 0){
+    else if(Object.keys(req.body).length === 0 || !req.body.oldPassword || !req.body.newPassword){
         return displayCustomError(res,400,false,"You must enter a password")}  
     else{
         try{
