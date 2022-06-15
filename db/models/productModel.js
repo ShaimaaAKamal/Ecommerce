@@ -16,7 +16,6 @@ const productModelSchema=new Schema({
     },
     description:{
         type:String,
-        required:[true, "can't be blank"],
         lowercase:true,
         trim:true
     },
@@ -37,10 +36,12 @@ const productModelSchema=new Schema({
         contentType: String
     }],
     category:{
+        required:true,
         type:mongoose.Schema.Types.ObjectId,
         ref:'categoryModel'
     },
     brand:{
+        required:true,
         type:mongoose.Schema.Types.ObjectId,
         ref:'brandModel'
     },

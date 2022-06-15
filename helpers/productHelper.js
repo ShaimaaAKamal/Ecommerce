@@ -8,5 +8,16 @@ const updateProductByAadding=async(entry)=>{
     return;
 }
 
+const ChangeProductBrandOrCategory=async (mode,fieldId,oldProduct,product,newFieldId) =>{
+    let oldData=await mode.findById(fieldId).exec();
+    let index=oldData.products.indexOf(oldProduct._id)
+    oldData.products.splice(index,1);
+    await oldData.save();
+    let newData=await mode.findById(newFieldId).populate('products').exec();
+    newData.products.push(product);
+    await newData.save();
+    return;
+}
 
-module.exports={updateProductByAadding}
+
+module.exports={updateProductByAadding,ChangeProductBrandOrCategory}

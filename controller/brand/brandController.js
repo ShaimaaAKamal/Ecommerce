@@ -17,7 +17,7 @@ const addBrandController=async (req,res) =>{
 
 const getBrandsController=async (req,res) => {
     try{let msg;
-        const brands=await Brand.find();
+        const brands=await Brand.find().populate({path:"products",select:"_id productname"});
         if(brands.length !=0)     msg="brands has been successfully Retreived";
         else  msg ="There are no brands exist"; 
         return displayData(res,200,true,msg,{brands});
@@ -30,10 +30,11 @@ const getBrandsController=async (req,res) => {
 const getSingleBrandController= async (req,res) =>{
     const id=req.params.brandId;
     try{
-        const brand=await Brand.find({_id:id});
+        const brand=await Brand.find({_id:id}).populate({path:"products",select:"_id productname"});
         if(brand.length != 0) return displayData(res,200,true,"Brand has been successfully retrieved",{brand});
         else return displayCustomError(res,404,false,"There are no such a brand exist")
     }catch(err){
+        console.log(err);
         return displayError(res,500,false,"Something went Wrong",err)
     }}  
     

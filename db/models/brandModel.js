@@ -18,10 +18,10 @@ const brandModelSchema=new Schema({
         data:Buffer,
         contentType: String
     }],
-    product:[
+    products:[
     {
         type:mongoose.Schema.Types.ObjectId,
-        ref:'producModel'
+        ref:'productModel'
     }
     ]
 },{timestamps:true});
