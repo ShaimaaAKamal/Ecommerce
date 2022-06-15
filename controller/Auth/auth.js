@@ -8,12 +8,12 @@ const {returnUsersDetails}=require("../../helpers/userDisplay");
 
 
 const loginController = async (req,res)=>{
-    if(Object.keys(req.body).length === 0){
-       return displayCustomError(res,400,false,"there are a missing fields")} 
+    if(Object.keys(req.body).length === 0 || !req.body.email || !req.body.password){
+       return displayCustomError(res,400,false,"You must enter full credentials")} 
 
     else{
         try{
-            const user =await User.findOne({username:req.body.username})
+            const user =await User.findOne({email:req.body.email})
         if(!user){
             return displayCustomError(res,401,false,"this user is not exist")
         }
@@ -30,6 +30,7 @@ const loginController = async (req,res)=>{
                      const token=generateJWT(user).token;
                      return displayData(res,200,true,"User has been successfully login",{user:returnUsersDetails(user,"login"),token}); }})}
         } catch(err){
+            console.log(err);
             return displayError(res,500,false,"Something went Wrong",err)
         }}
 }

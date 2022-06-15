@@ -27,6 +27,6 @@ app.use('/reviews',reviewRouter);
 app.use('/orders',orderRouter);
 
 app.get('/statistics',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,getStatistics)
-app.listen(3000,()=>{
-    console.log('Server is running on https://localhost:3000 to stop the server please press ctrl + c');
+app.listen(6000,()=>{
+    console.log('Server is running on https://localhost:6000 to stop the server please press ctrl + c');
 })
