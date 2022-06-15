@@ -128,12 +128,9 @@ const deleteSingleOrderController=async (req,res)=>{
                    return displayData(res,200,true,"Order has been successfully updated",{order});
 
                     }
-             else return displayCustomError(res,401,false,"You are unauthorized to perform that action");}
-            else return displayCustomError(res,404,false,"There is no such  order exists")
-        }catch(err){
-            return displayError(res,500,false,"Something went Wrong",err)
-        }
-    }}
+         else return displayCustomError(res,401,false,"You are unauthorized to perform that action");}
+        else return displayCustomError(res,404,false,"There is no such  order exists")
+        }catch(err){return displayError(res,500,false,"Something went Wrong",err)}}}
 
 const updateOrderStatusController=async (req,res)=>{
     if(Object.keys(req.body).length === 0 ||! req.body.status){
@@ -142,7 +139,7 @@ const updateOrderStatusController=async (req,res)=>{
     else{try{
         const id=req.params.orderId;
         let order = await Order.findOneAndUpdate({_id:id},{status:req.body.status},{new:true});
-        if(order) return displayData(res,200,true,"Order has been successfully updated",{order});
+        if(order) return displayData(res,200,true,"Order has been successfully updated",{order:displayOrder(order)});
         else return displayCustomError(res,404,false,"There is no such a order exists")
         }catch(err){
             return displayError(res,500,false,"Something went Wrong",err)
@@ -160,7 +157,7 @@ const addOrderReviewController=async(req,res) =>{
         else{try{
             if(order.review === req.body.review)  return displayCustomError(res,400,false,"There is nothing to be uodated")
              order = await Order.findOneAndUpdate({_id:id},{review:req.body.review},{new:true});
-            if(order) return displayData(res,200,true,"A review has been added to that order",{order});
+            if(order) return displayData(res,200,true,"A review has been added to that order",{order:displayOrder(order)});
             else return displayCustomError(res,404,false,"There is no such order exists")
             }catch(err){
                 return displayError(res,500,false,"Something went Wrong",err)
