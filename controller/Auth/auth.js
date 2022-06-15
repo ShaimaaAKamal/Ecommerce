@@ -1,10 +1,8 @@
 const generateJWT =require("../../helpers/jwtGeneration");
-
-
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const User=require("../../db/models/userModel");
 const passport_authenticate_jwt=require('../../middleware/authenticate');
-const {returnUsersDetails}=require("../../helpers/userDisplay")
+const {returnUsersDetails}=require("../../helpers/userDisplay");
 
 
 
@@ -30,7 +28,7 @@ const loginController = async (req,res)=>{
                 }
                 else{
                      const token=generateJWT(user).token;
-                     return displayData(res,200,true,"User has been successfully login",{user,token}); }})}
+                     return displayData(res,200,true,"User has been successfully login",{user:returnUsersDetails(user,"login"),token}); }})}
         } catch(err){
             return displayError(res,500,false,"Something went Wrong",err)
         }}
@@ -44,7 +42,7 @@ const registerController= async (req,res)=>{
     else{
         try{
           let user = await User.create(req.body)
-          return displayData(res,200,true,"User has been successfully added",{user});
+          return displayData(res,200,true,"User has been successfully added",{user:returnUsersDetails(user,"register")});
         }
         catch(err){
             return displayError(res,500,false,"Something went Wrong",err)}}  
@@ -53,7 +51,7 @@ const registerController= async (req,res)=>{
 const profileController = passport_authenticate_jwt((req,res,next)=>{
     const token=req.headers.authorization;
     const user=req.user;
-    return displayData(res,200,true,"User has been successfully Retreived",{user,token});
+    return displayData(res,200,true,"User has been successfully Retreived",{user:returnUsersDetails(user,"profile"),token});
 
 })
 
@@ -105,7 +103,7 @@ const getAllUsersController= async(req,res)=>{
             let hashpassword=await user.hashPassword(req.body.password);
             await user.updateOne({password:hashpassword});
             let updatedUser=await User.findById(userId).exec();
-            return displayData(res,200,true,"Password has been reset",{user:updatedUser});
+            return displayData(res,200,true,"Password has been reset",{user:returnUsersDetails(updatedUser)});
         }
             else displayCustomError(res,404,false,"there is no such a user")  ;
         }catch(err){
@@ -135,7 +133,7 @@ const getAllUsersController= async(req,res)=>{
                         let hashpassword=await user.hashPassword(req.body.newPassword);
                         await user.updateOne({password:hashpassword});
                         let updatedUser=await User.findById(userId).exec();
-                        return displayData(res,200,true,"Password has been changed",{user:updatedUser});
+                        return displayData(res,200,true,"Password has been changed",{user:returnUsersDetails(updatedUser)});
                           }})
         }
         else displayCustomError(res,404,false,"There is no such a user")  ;
@@ -152,7 +150,7 @@ const updateUserStatus=async (req,res) =>{
 else{try{
 const id=req.params.userId;
 let user = await User.findOneAndUpdate({_id:id},{status:req.body.status},{new:true});
-if(user) return displayData(res,200,true,"user has been successfully updated",{user});
+if(user) return displayData(res,200,true,"user has been successfully updated",{user:returnUsersDetails(user)});
 else return displayCustomError(res,404,false,"There is no such  user exists")
 }catch(err){
 return displayError(res,500,false,"Something went Wrong",err)

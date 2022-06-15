@@ -1,14 +1,23 @@
-  // else if(req.query.creationDate) {
-                    //     let d=new Date(req.query.creationDate);
-                    //     let newDate=d.setDate(d.getDate() + 1);
-                    //     console.log(new Date (newDate).toISOString());
-                    //     console.log(req.query.creationDate);
-                        //  console.log(d.toISOString())
-                    //     orders=await Order.find({createdAt:{
-                    //     $gte: d.toISOString(),
-                    //     $lt: (new Date(d.setDate(d.getDate() + 1))).toISOString()
-                    // }}).populate('user');}
-                    // orders=await Order.find({createdAt:{
-                    //         $gte: `${req.query.creationDate}`,
-                    //         $lt: `${(new Date (d.setDate(d.getDate() + 1))).toISOString()}`
-                    //     }}).populate('user');}
+const e = require("express");
+
+const returnUsersDetails=(user,index="")=>{
+    let userDetails={};
+    if (index == "login"){
+      Object.keys(user._doc).forEach((key)=>{
+        if(key == "_id" || key == "status" || key == "orders" || key == "reviews"  || key == "username" || key == "created"   || key == "email"  || key == "phone" ) userDetails[key]=user[key];
+         else return;
+       })
+    }
+    else{
+      Object.keys(user._doc).forEach((key)=>{
+        if(key == "_id" || key == "status" || key == "orders" || key == "reviews"  || key == "username" || key == "created" ) userDetails[key]=user[key];
+         else return;
+       })
+    }
+   
+   return userDetails;
+
+}
+
+
+module.exports={returnUsersDetails}
