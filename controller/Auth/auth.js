@@ -63,7 +63,7 @@ const getAllUsersController= async(req,res)=>{
         if(req.query.status)  users=await User.find({isAdmin:false,status:req.query.status}).populate("orders").populate("reviews");
         else if(req.query.username)  users=await User.find({isAdmin:false,username:req.query.username}).populate("orders").populate("reviews");
         else if (req.query.creationDate) 
-            { users=await User.find({created:req.query.creationDate}).populate("orders").populate("reviews");}
+            { users=await User.find({created:req.query.creationDate,isAdmin:false}).populate("orders").populate("reviews");}
         else  users=await User.find({isAdmin:false}).populate("orders").populate("reviews");
         if(users.length != 0 )   msg="Users has been successfully Retreived"; 
         else  msg="There are no users exist";  
