@@ -95,7 +95,7 @@ const getAllUsersController= async(req,res)=>{
  const resetPasswordController = async(req,res)=>{
      const userId=req.query.userId;
      if(!userId)  return displayCustomError(res,400,false,"UserId doesn't exists");
-     else  if(Object.keys(req.body).length === 0 || !req.body.passowrd){
+     else  if(Object.keys(req.body).length === 0 || !req.body.password){
         return displayCustomError(res,400,false,"You must enter a password")}  
         else{
         try{
