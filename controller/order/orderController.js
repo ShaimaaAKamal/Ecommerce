@@ -25,7 +25,7 @@ const addOrderController=async (req,res) =>{
             try{let msg,orders,query,newOrders;
                 if(req.user.isAdmin) query=await adminGetOrders(req);
                 else   query = userGetOrders(req); 
-                orders=await Order.find(query).populate({path:"user",select:"_id username"});             
+                orders=await Order.find(query,{createdAt:0,updatedAt:0}).populate({path:"user",select:"_id username"});             
                 if(orders.length !=0)     {msg="orders has been successfully Retreived"; newOrders=orders.map(order => {return displayOrder(order)})}
                 else  {msg ="There are no orders exist"; newOrders=[]}
                 return displayData(res,200,true,msg,{orders:newOrders});
@@ -36,11 +36,14 @@ const addOrderController=async (req,res) =>{
 
 const getSingleOrderController=async (req,res) =>{
     const id=req.params.orderId;
-    try{
-        let order=await Order.findOne({_id:id}).populate('user');
-        if(order.length != 0) {return displayData(res,200,true,"Order has been successfully retrieved",{order});}
-        else return displayCustomError(res,404,false,"There are orders exist")
+    try{ let order;
+        if(req.user.isAdmin)  query={_id:id}
+        else query={_id:id,user:req.user._id}
+        order=await Order.findOne(query,{createdAt:0,updatedAt:0}).populate({path:"user",select:"_id username"});
+        if(order) {return displayData(res,200,true,"Order has been successfully retrieved",{order:displayOrder(order)});}
+        else return displayCustomError(res,404,false,"There are no orders exist")
     }catch(err){
+        console.log(err);
         return displayError(res,500,false,"Something went Wrong",err)
     }}  
 
