@@ -1,7 +1,7 @@
 const Order=require("../../db/models/ordersModel");
 const User=require("../../db/models/userModel");
 const Product=require("../../db/models/productModel");
-const {addOrderToUser,displayOrder,adminGetOrders,userGetOrders}=require("../../helpers/orderHelper");
+const {addOrderToUser,displayOrder,adminGetOrders,userGetOrders,checkOrderProductExistence,getUpdatedAndNonAvalibaleOrderProducts,increaseOrder,minimizeOrder}=require("../../helpers/orderHelper");
 const {updateProductByAadding}=require("../../helpers/productHelper");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const upateOrderProducts=require("../../helpers/updateOrderProducts")
@@ -75,62 +75,44 @@ const deleteSingleOrderController=async (req,res)=>{
             return displayCustomError(res,400,false,"You must send Products");
         } else { try{
             const id=req.params.orderId;
-            const oldOrder = await Order.findById(id).exec();
+            let oldOrder = await Order.findById(id).exec();
             if(oldOrder) {
                 if((req.user._id).equals(oldOrder.user)){ 
                     let nonAvailableProducts=[]
                     let updatedProducts=[];
                    for (prod of req.body.products){
-                       {
-                           let data={exits:false,qty:0,price:0};
-
-                           for(entry of oldOrder.orderProducts){
-                               if((entry.product).equals(prod.product)) { 
-                                data={exists:true,qty:entry.qty,price:entry.price};break; }
-                           }
+                          let data=checkOrderProductExistence(oldOrder,prod);
                            if(data.exists){
-                               let diffqty=data.qty - prod.qty;
-                                if(diffqty > 0)
-                                    updatedProducts.push({productId:prod.product,addedQty:diffqty,qty:prod.qty})
-                                else if(diffqty < 0){
-                                    let product=await Product.findById(prod.product).exec();
-                                    let finalQty=product.qty - (-1 *diffqty);
-                                    if(finalQty < 0 ) nonAvailableProducts.push({producId:prod.product ,availablePieces:product.qty, productName:product.productname});
-                                    else updatedProducts.push({productId:prod.product,finalqty:finalQty,qty:prod.qty,diffqty:(-1*diffqty)})
-                                    }}
-                           else  {  
+                               let UpdatedAndNonAvalibaleOrderProducts=await getUpdatedAndNonAvalibaleOrderProducts(data,prod,updatedProducts,nonAvailableProducts);
+                                updatedProducts=UpdatedAndNonAvalibaleOrderProducts.updatedProducts;
+                                nonAvailableProducts=UpdatedAndNonAvalibaleOrderProducts.nonAvailableProducts;
+                            } else  {  
                                let   product=await Product.findById(prod.product).exec();
                                      let finalQty=product.qty - prod.qty;
                                      if(finalQty < 0 ) nonAvailableProducts.push({producId:prod.product ,availablePieces:product.qty, productName:product.productname});
-                                     else updatedProducts.push({productId:prod.product,finalqty:finalQty,qty:prod.qty,diffqty:prod.qty,})}}}
+                                     else updatedProducts.push({productId:prod.product,finalqty:finalQty,qty:prod.qty,diffqty:prod.qty,})}}
+
+
                         if(nonAvailableProducts.length != 0) return displayError(res,400,false,"Cant't update order, some products aren't avilable",{nonAvailableProducts})
+
                         if(updatedProducts.length == 0 ) return displayCustomError(res,400,false,"There new products to be updated");
+
+
                         for(entry of updatedProducts){
+                            let query;
                             let product=await Product.findById(entry.productId).exec();
-                            if (entry.addedQty) {await Product.updateOne({_id:entry.productId},{qty:(product.qty+entry.addedQty)}); 
-                              oldOrder.totalQty-= entry.addedQty;
-                              oldOrder.orderPrice-= entry.addedQty * product.price;  
-                              }
-                         
-                              else if (entry.finalqty && entry.finalqty > 0 ){ await Product.updateOne({_id:entry.productId},{qty:entry.finalqty});
-                              oldOrder.totalQty+= entry.diffqty;
-                              oldOrder.orderPrice+= entry.diffqty * product.price;
-                        }
-                            
-                            else  {await Product.updateOne({_id:entry.productId},{qty:entry.finalqty,availability:false});
-                            oldOrder.totalQty+= entry.diffqty;
-                            oldOrder.orderPrice+= entry.diffqty * product.price;  
-                        }
-                        }
+                            if (entry.addedQty) oldOrder=await minimizeOrder({_id:entry.productId},{qty:(product.qty+entry.addedQty)},oldOrder,entry,product) 
+                            else if (entry.finalqty && entry.finalqty > 0 ) oldOrder=await increaseOrder({_id:entry.productId},{qty:entry.finalqty},oldOrder,entry,product) 
+                            else oldOrder=await increaseOrder({_id:entry.productId},{qty:entry.finalqty,availability:false},oldOrder,entry,product)}
+
                         if(oldOrder.totalQty < 0) oldOrder.totalQty=0;
                         if( oldOrder.orderPrice < 0)  oldOrder.orderPrice=0;
-                   let order= await Order.findByIdAndUpdate({_id:id},{orderProducts:req.body.products,totalQty:oldOrder.totalQty,orderPrice:oldOrder.orderPrice},{new:true});
-                   return displayData(res,200,true,"Order has been successfully updated",{order});
-
-                    }
-         else return displayCustomError(res,401,false,"You are unauthorized to perform that action");}
-        else return displayCustomError(res,404,false,"There is no such  order exists")
-        }catch(err){return displayError(res,500,false,"Something went Wrong",err)}}}
+                   let newproduct=req.body.products.filter(product=> product.qty >0 )
+                   let order= await Order.findByIdAndUpdate({_id:id},{orderProducts:newproduct,totalQty:oldOrder.totalQty,orderPrice:oldOrder.orderPrice},{new:true});
+                   return displayData(res,200,true,"Order has been successfully updated",{order:displayOrder(order)});}
+                   else return displayCustomError(res,401,false,"You are unauthorized to perform that action");}
+                   else return displayCustomError(res,404,false,"There is no such  order exists")
+                   }catch(err){console.log(err);return displayError(res,500,false,"Something went Wrong",err)}}}
 
 const updateOrderStatusController=async (req,res)=>{
     if(Object.keys(req.body).length === 0 ||! req.body.status){
