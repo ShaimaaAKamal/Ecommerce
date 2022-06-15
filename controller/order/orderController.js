@@ -2,6 +2,7 @@ const Order=require("../../db/models/ordersModel");
 const User=require("../../db/models/userModel");
 const Product=require("../../db/models/productModel");
 const {addOrderToUser,displayOrder,adminGetOrders,userGetOrders}=require("../../helpers/orderHelper");
+const {updateProductByAadding}=require("../../helpers/productHelper");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const upateOrderProducts=require("../../helpers/updateOrderProducts")
 
@@ -50,9 +51,9 @@ const getSingleOrderController=async (req,res) =>{
 const deleteSingleOrderController=async (req,res)=>{
         const id=req.params.orderId;
      try{
-         let order;
+         let order 
          if(req.user.isAdmin)
-          order=await Order.findOneAndDelete({_id:id}).populate('user');
+          order=await Order.findOneAndDelete({_id:id}).populate({path:"user",select:"_id username"});
          else
             { 
               order=await Order.findById(id);
@@ -62,14 +63,8 @@ const deleteSingleOrderController=async (req,res)=>{
               deletedorder = await Order.deleteOne({_id:id});
             }
          if(order)  {
-            for(let entry of order.orderProducts){   
-                const oldproduct=await Product.findById(entry.product)
-                if(oldproduct.qty == 0 )
-                await Product.updateOne({_id:entry.product},{qty:entry.qty,availability:true})
-                else  await Product.updateOne({_id:entry.product},{qty:entry.qty+oldproduct.qty})
-             }
-             return displayData(res,200,true,"Order has been successfully deleted",{order});
-         }
+            for(let entry of order.orderProducts){ await updateProductByAadding(entry);}
+             return displayData(res,200,true,"Order has been successfully deleted",{order:displayOrder(order)});}
          else return displayCustomError(res,404,false,"There are no such a order exist")
      }catch(err){
          return displayError(res,500,false,"Something went Wrong",err)
