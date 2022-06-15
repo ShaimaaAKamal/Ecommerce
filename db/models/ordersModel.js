@@ -17,9 +17,11 @@ const orderModelSchema=new Schema({
         default:"pending"
     },
     payment:{
-         type:String,
-         Required:true,
-         enum:["Cash on delivery" , "Master Card" , "Credit Card"]
+         method:{
+             type:String,
+            Required:true,
+            enum:["Cash on delivery" , "Credit Card"]},
+        info :String
     },
     shippingAddress:{
        type:String,

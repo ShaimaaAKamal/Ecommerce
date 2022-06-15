@@ -1,34 +1,25 @@
 const Order=require("../../db/models/ordersModel");
 const User=require("../../db/models/userModel");
 const Product=require("../../db/models/productModel");
-
-
+const {addOrderToUser,displayOrder}=require("../../helpers/orderHelper");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const upateOrderProducts=require("../../helpers/updateOrderProducts")
 
+
 const addOrderController=async (req,res) =>{
-    if(Object.keys(req.body).length === 0){
-        return displayCustomError(res,400,false,"there are a missing fields");
-    } else{
-        try{
+    if(Object.keys(req.body).length === 0 || !req.body.shippingAddress || !req.body.billingAddress || !req.body.payment || !req.body.products ){
+        return displayCustomError(res,400,false,"You should provide order info like Shipping Address , Billing Adress , Payment Details and Products");
+    } else { try{
             const {shippingAddress,billingAddress,payment,products}=req.body;
             const user=req.user._id
-            if(products.length == 0) return displayCustomError(res,400,false,"You must send the order Products");
-            else {
                 let addedProducts=products.filter(product => product.qty > 0 )
                 if(addedProducts.length == 0)  return displayCustomError(res,400,false,"There is no products to be ordered");
-                else{
-                    let updateStatus= await   upateOrderProducts(0,0,addedProducts,"Can't place order, some producst are not available",res);
+                else{ let updateStatus= await   upateOrderProducts(0,0,addedProducts,"Can't place order, some producst are not available",res);
                 if(! updateStatus.status) return updateStatus.data;
                 const orderData={shippingAddress,billingAddress,payment,user,orderProducts:addedProducts,totalQty:updateStatus.data.totalQty,orderPrice:updateStatus.data.orderPrice};
                 const order=await Order.create(orderData);
-                if(order){
-                    let userAccount=await User.findById(user).exec();
-                    userAccount.orders.push(order);
-                    await User.updateOne({_id:user},{orders:userAccount.orders});
-                }
-                return displayData(res,200,true,"order has been successfully placed",{order});}}}
-        catch(err) {return displayError(res,500,false,"Something went Wrong",err);}}}
+                if(order && addOrderToUser(user,order) ) return displayData(res,200,true,"order has been successfully placed",{order:displayOrder(order)});}}
+        catch(err) {console.log(err) ;return displayError(res,500,false,"Something went Wrong",err);}}}
 
  const getOrdersController=async (req,res) => {
             try{let msg;
