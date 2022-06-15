@@ -13,6 +13,7 @@ const uploadImage=async(req,res)=>{
         return displayCustomError(res,400,false,"Please provide an Image")
      }
     const filename = await fileUpload.save(req.file.buffer);
+    console.log(filename);
     return displayData(res,200,true,"Image has been successfullu uploaded",{filename});
 }
 
