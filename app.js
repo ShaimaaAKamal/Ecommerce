@@ -6,15 +6,17 @@ const brandRouter=require("./routes/brand/brand");
 const categoryRouter=require("./routes/category/category");
 const reviewRouter=require("./routes/review/review");
 const orderRouter=require("./routes/order/order");
+const imageRouter=require("./routes/upload/upload");
 const passport=require('passport');
 const passport_authenticate_jwt=require('./middleware/authenticate');
 const isAdmin=require('./middleware/isAdmin')
-
 const cors= require('cors');
 const getStatistics=require("./controller/statistics/statistics")
+;
 require('./db/dbConnection');
 require("./passport")(passport);
-app.use(cors())
+app.use(cors());
+app.use(express.static('public'))
 
 app.use(passport.initialize());
 app.use(express.json());
@@ -25,6 +27,8 @@ app.use('/brands',brandRouter);
 app.use('/categories',categoryRouter);
 app.use('/reviews',reviewRouter);
 app.use('/orders',orderRouter);
+app.use('/images',imageRouter);
+
 
 app.get('/statistics',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,getStatistics)
 app.get("*",(Req,res)=>{
