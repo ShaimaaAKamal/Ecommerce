@@ -30,6 +30,6 @@ app.get('/statistics',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmi
 app.get("*",(Req,res)=>{
     return res.status(404).json({"message":"Not Found"})
 })
-app.listen(6000,()=>{
+app.listen((process.env.PORT || 5000),()=>{
     console.log('Server is running on https://localhost:6000 to stop the server please press ctrl + c');
 })
