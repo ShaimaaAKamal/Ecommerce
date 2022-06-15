@@ -1,5 +1,6 @@
 
 const {displayCustomError,displayData}=require("../../helpers/display");
+const path=require('path');
 
 
 const uploadImage=async(req,res)=>{
