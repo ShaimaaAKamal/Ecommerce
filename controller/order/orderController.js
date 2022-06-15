@@ -1,7 +1,7 @@
 const Order=require("../../db/models/ordersModel");
 const User=require("../../db/models/userModel");
 const Product=require("../../db/models/productModel");
-const {addOrderToUser,displayOrder}=require("../../helpers/orderHelper");
+const {addOrderToUser,displayOrder,adminGetOrders,userGetOrders}=require("../../helpers/orderHelper");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 const upateOrderProducts=require("../../helpers/updateOrderProducts")
 
@@ -19,30 +19,16 @@ const addOrderController=async (req,res) =>{
                 const orderData={shippingAddress,billingAddress,payment,user,orderProducts:addedProducts,totalQty:updateStatus.data.totalQty,orderPrice:updateStatus.data.orderPrice};
                 const order=await Order.create(orderData);
                 if(order && addOrderToUser(user,order) ) return displayData(res,200,true,"order has been successfully placed",{order:displayOrder(order)});}}
-        catch(err) {console.log(err) ;return displayError(res,500,false,"Something went Wrong",err);}}}
+        catch(err) {return displayError(res,500,false,"Something went Wrong",err);}}}
 
  const getOrdersController=async (req,res) => {
-            try{let msg;
-                let orders;
-                if(req.user.isAdmin)
-                 {     console.log(req.query.creationDate);
-                    if(req.query.status) orders=await Order.find({status:req.query.status}).populate('user');
-                    else if (req.query.username) {
-                        let user =await User.findOne({username:req.query.username})
-                        orders=await Order.find({user:user._id}).populate('user')}
-                  else if (req.query.creationDate) {
-                           { orders=await Order.find({created:req.query.creationDate}).populate('user')}}
-                    else  orders=await Order.find().populate('user');
-                 }                
-                else   {
-                    if(req.query.status) orders=await Order.find({status:req.query.status}).populate('user');
-                    else if (req.query.creationDate) {
-                        { orders=await Order.find({created:req.query.creationDate}).populate('user')}}
-                    else  orders=await Order.find({user:req.user._id}).populate('user');
-                } 
-                if(orders.length !=0)     {msg="orders has been successfully Retreived";}
-                else  msg ="There are no orders exist"; 
-                return displayData(res,200,true,msg,{orders});
+            try{let msg,orders,query,newOrders;
+                if(req.user.isAdmin) query=await adminGetOrders(req);
+                else   query = userGetOrders(req); 
+                orders=await Order.find(query).populate({path:"user",select:"_id username"});             
+                if(orders.length !=0)     {msg="orders has been successfully Retreived"; newOrders=orders.map(order => {return displayOrder(order)})}
+                else  {msg ="There are no orders exist"; newOrders=[]}
+                return displayData(res,200,true,msg,{orders:newOrders});
             }
             catch(err){
                 return displayError(res,500,false,"Something went Wrong",err);
