@@ -12,9 +12,7 @@ const uploadImage=async(req,res)=>{
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
 
-
-
-    const uploadedImage = async ()=>{
+    const uploadedImageFun= async (req)=>{
         for(image of req.files.images){
             console.log(image);
             await s3.upload({
@@ -26,6 +24,7 @@ const uploadImage=async(req,res)=>{
         }
         console.log('done');
     } 
+    uploadedImageFun();
 }
 
 module.exports=uploadImage;
