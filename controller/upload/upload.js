@@ -3,7 +3,7 @@ const {displayCustomError,displayData,displayError}=require("../../helpers/displ
 const Product=require('../../db/models/productModel');
 const Category=require('../../db/models/categoryModel');
 const Brand=require('../../db/models/brandModel');
-ObjectId = require('mongodb').ObjectId;;
+// ObjectId = require('mongodb').ObjectId;;
 const upload=require("../../helpers/load")
 const aws = require('aws-sdk');
 
