@@ -13,6 +13,8 @@ const isAdmin=require('./middleware/isAdmin')
 const cors= require('cors');
 const getStatistics=require("./controller/statistics/statistics");
 const fileupload = require("express-fileupload");
+const {displayCustomError}=require("./helpers/display");
+
 require('./db/dbConnection');
 require("./passport")(passport);
 app.use(cors());
@@ -33,7 +35,7 @@ app.use('/images',imageRouter);
 
 app.get('/statistics',passport_authenticate_jwt((req,res,next)=>{next()}),isAdmin,getStatistics)
 app.get("*",(Req,res)=>{
-    return res.status(404).json({"message":"Not Found"})
+    return displayCustomError(res,404,false,"Resource Not Found");
 })
 app.listen((process.env.PORT || 49155),()=>{
     console.log('Server is running to stop the server please press ctrl + c');
