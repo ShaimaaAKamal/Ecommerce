@@ -16,7 +16,7 @@ const uploadImage=async(req,res)=>{
     if (!req.files) {
         return displayCustomError(res,400,false,"Please provide an Image")
      }
-    const filename = await fileUpload.save(req.file.buffer);
+    const filename = await fileUpload.save(req.files.buffer);
     console.log(filename);
     return displayData(res,200,true,"Image has been successfullu uploaded",{filename});
 }
