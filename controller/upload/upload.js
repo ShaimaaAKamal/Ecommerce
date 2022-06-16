@@ -36,7 +36,7 @@ const uploadImage=async(req,res)=>{
                 let newImages=Images.map(image => image.Location)
         
                 if(req.body.imageFolder === "Products"){
-                    console.log(await Product.findById((JSON.stringify(req.body.folderImageId))).exec())
+                    console.log(await Product.findById(((req.body.folderImageId)).exec())
                     // result =await Product.findOneAndUpdate({_id:ObjectId(req.body.folderImageId)},{images:newImages})
                     // console.log(result)
                 }
