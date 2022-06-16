@@ -9,18 +9,22 @@ const uploadImage=async(req,res)=>{
     const s3=new aws.S3();
     console.log(req.files);
 
-    const uploadedImage = await s3.upload({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: req.files[0].name,
-        Body:req.files[0] ,
-      }).promise()
-    console.log(req.body);
-
-     if (!req.files) {
+    if (!req.files) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
 
-   
+
+
+    const uploadedImage = async ()=>{
+        for(image of req.files.images){
+            await s3.upload({
+                Bucket: process.env.AWS_S3_BUCKET_NAME,
+                Key: image.name,
+                Body:image ,
+              }).promise()
+             
+        }
+    } 
 }
 
 module.exports=uploadImage;
