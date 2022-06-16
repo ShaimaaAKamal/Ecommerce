@@ -40,8 +40,6 @@ const getSingleCategoryController= async (req,res) =>{
 const deleteSingleCategoryController=async (req,res)=>{
        const id=req.params.categoryId;
     try{ 
-        let 
-        // const category=await Category.findOneAndDelete({_id:id});
         const category=await Category.findById(id).exec();
         if(category) {let products=category.products;
                       for(let product of products){
@@ -51,7 +49,6 @@ const deleteSingleCategoryController=async (req,res)=>{
             return displayData(res,200,true,"Category has been successfully deleted",{category});}
         else return displayCustomError(res,404,false,"There are no such a Category exist")
     }catch(err){
-        console.log(err);
         return displayError(res,500,false,"Something went Wrong",err)
     }} 
 
