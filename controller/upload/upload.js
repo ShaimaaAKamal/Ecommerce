@@ -2,7 +2,8 @@
 const {displayCustomError,displayData}=require("../../helpers/display");
 const path=require('path');
 const Resize= require("../../helpers/resize");
-
+const aws = require('aws-sdk');
+const S3_BUCKET = process.env.S3_BUCKET;
 
 const uploadImage=async(req,res)=>{
     // if (req.file === undefined)  r
