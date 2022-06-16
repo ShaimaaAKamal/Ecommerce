@@ -1,7 +1,5 @@
 
 const {displayCustomError,displayData}=require("../../helpers/display");
-// const path=require('path');
-// const Resize= require("../../helpers/resize");
 const aws = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
 
@@ -24,9 +22,10 @@ const uploadImage=async(req,res)=>{
      }
       
     const uploadedImageFun= async (req)=>{
-        if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image); console.log(out)}}
-        else {let out = await upload(req.files.images); console.log(out)}
-        console.log('done');
+        let Images=[];
+        if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image); Images.push(out);}}
+        else {let out = await upload(req.files.images); Images.push(out)}
+        return displayData(res,200,true,"Image has been successfully uploaded",{Images});
         }
     await uploadedImageFun(req);
 }
