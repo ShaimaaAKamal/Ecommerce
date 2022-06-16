@@ -44,9 +44,9 @@ const uploadImage=async(req,res)=>{
                 //   result =  await Category.findOneAndUpdate({_id:req.body.folderImageId},{images:newImages},{new:true})
                 // }
                 // return displayData(res,200,true,"Image has been successfully uploaded",{result});
-                // }
-                
-            await uploadedImageFun(req);
+
+                }
+                  await uploadedImageFun(req);
         }
         catch(err){
             console.log(err);
