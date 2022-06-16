@@ -28,8 +28,7 @@ const uploadImage=async(req,res)=>{
                 else {let out = await upload(req.files.images,req.body.imageFolder,s3); Images.push(out)}
                 let newImages=Images.map(image => image.Location)
                 if(req.body.imageFolder === "Products"){
-                    result =await Product.findOneAndUpdate({_id:ObjectId(req.body.folderImageId)},{images:newImages})
-                    console.log(result)
+                    result =await Product.findOneAndUpdate({_id:ObjectId(req.body.folderImageId)},{images:newImages},{new:true})
                 }
                 else if(req.body.imageFolder === "Brands"){
                   result =  await Brand.findOneAndUpdate({_id:req.body.folderImageId},{images:newImages},{new:true})
@@ -45,9 +44,7 @@ const uploadImage=async(req,res)=>{
                   await uploadedImageFun(req);
         }
         catch(err){
-            console.log(err);
             return displayError(res,500,false,"Something went Wrong",err)
-
         }
      }
 }

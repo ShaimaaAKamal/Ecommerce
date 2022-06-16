@@ -34,7 +34,6 @@ const getSingleBrandController= async (req,res) =>{
         if(brand.length != 0) return displayData(res,200,true,"Brand has been successfully retrieved",{brand});
         else return displayCustomError(res,404,false,"There are no such a brand exist")
     }catch(err){
-        console.log(err);
         return displayError(res,500,false,"Something went Wrong",err)
     }}  
     
