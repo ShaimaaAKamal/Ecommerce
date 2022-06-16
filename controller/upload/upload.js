@@ -15,7 +15,7 @@ const uploadImage=async(req,res)=>{
         let extention=(image.name.split("."))[1];
         let result=  await s3.upload({
            Bucket: 'shopifyallimages',
-           Key: `${imageFolder}/${Date.now()}-shopifyall.${extention}`,
+           Key: imageFolder +`/${Date.now()}-shopifyall.${extention}`,
            Body:image.data ,
          }).promise();
          return result}
@@ -34,17 +34,17 @@ const uploadImage=async(req,res)=>{
                 else {let out = await upload(req.files.images,req.body.imageFolder); Images.push(out)}
                 let newImages=Images.map(image => image.Location)
     
-                if(req.body.imageFolder === "Products"){
-                    result =await Product.findOneAndUpdate({_id:folderImageId},{images:newImages},{new:true})
-                }
-                if(req.body.imageFolder === "Brands"){
-                  result =  await Brand.findOneAndUpdate({_id:folderImageId},{images:newImages},{new:true})
-                }
-                if(req.body.imageFolder === "Categories"){
-                  result =  await Category.findOneAndUpdate({_id:folderImageId},{images:newImages},{new:true})
-                }
-                return displayData(res,200,true,"Image has been successfully uploaded",{result});
-                }
+                // if(req.body.imageFolder === "Products"){
+                //     result =await Product.findOneAndUpdate({_id:req.body.folderImageId},{images:newImages},{new:true})
+                // }
+                // else if(req.body.imageFolder === "Brands"){
+                //   result =  await Brand.findOneAndUpdate({_id:req.body.folderImageId},{images:newImages},{new:true})
+                // }
+                // else if(req.body.imageFolder === "Categories"){
+                //   result =  await Category.findOneAndUpdate({_id:req.body.folderImageId},{images:newImages},{new:true})
+                // }
+                // return displayData(res,200,true,"Image has been successfully uploaded",{result});
+                // }
                 
             await uploadedImageFun(req);
         }
