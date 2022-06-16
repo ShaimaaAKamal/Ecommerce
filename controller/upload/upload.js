@@ -24,7 +24,7 @@ const uploadImage=async(req,res)=>{
             const uploadedImageFun= async (req)=>{
                 let Images=[];
                 let result;
-                if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image,req.body.imageFolder,s3); Images.push(out);}}
+                if (req.files.images.length > 1){ for(let image of req.files.images) {console.log(image);let out = await upload(image,req.body.imageFolder,s3); Images.push(out);}}
                 else {let out = await upload(req.files.images,req.body.imageFolder,s3); Images.push(out)}
                 let newImages=Images.map(image => image.Location)
                 if(req.body.imageFolder === "Products"){
