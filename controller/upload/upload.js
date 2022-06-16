@@ -7,7 +7,6 @@ const S3_BUCKET = process.env.S3_BUCKET;
 
 const uploadImage=async(req,res)=>{
     const s3=new aws.S3();
-    console.log(req.files);
 
     if (!req.files) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
@@ -17,13 +16,15 @@ const uploadImage=async(req,res)=>{
 
     const uploadedImage = async ()=>{
         for(image of req.files.images){
+            console.log(image);
             await s3.upload({
                 Bucket: process.env.AWS_S3_BUCKET_NAME,
                 Key: image.name,
-                Body:image ,
+                Body:image.data ,
               }).promise()
              
         }
+        console.log('done');
     } 
 }
 
