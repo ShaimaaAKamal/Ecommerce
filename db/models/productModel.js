@@ -32,8 +32,7 @@ const productModelSchema=new Schema({
         default:true
     },
     images:[{
-        data:Buffer,
-        contentType: String
+        type:String
     }],
     category:{
         required:true,

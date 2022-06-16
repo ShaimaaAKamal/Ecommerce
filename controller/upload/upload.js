@@ -1,8 +1,10 @@
 
-const {displayCustomError,displayData}=require("../../helpers/display");
+const {displayCustomError,displayData,displayError}=require("../../helpers/display");
+const Product=require('../../db/models/userModel');
+const Category=require('../../db/models/userModel');
+const Brand=require('../../db/models/userModel');
+
 const aws = require('aws-sdk');
-const { request } = require("express");
-const S3_BUCKET = process.env.S3_BUCKET;
 
 
 
@@ -24,13 +26,32 @@ const uploadImage=async(req,res)=>{
         return displayCustomError(res,400,false,"You Select a Folder Id")
      }
      else{
-        const uploadedImageFun= async (req)=>{
-            let Images=[];
-            if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image); Images.push(out);}}
-            else {let out = await upload(req.files.images); Images.push(out)}
-            return displayData(res,200,true,"Image has been successfully uploaded",{Images});
-            }
-        await uploadedImageFun(req);
+        try{
+            const uploadedImageFun= async (req)=>{
+                let Images=[];
+                let result;
+                if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image); Images.push(out);}}
+                else {let out = await upload(req.files.images); Images.push(out)}
+                let newImages=Images.map(image => image.Location)
+    
+                if(req.body.imageFolder === "Products"){
+                    result =await Product.findOneAndUpdate({_id:folderImageId},{images:newImages},{new:true})
+                }
+                if(req.body.imageFolder === "Brands"){
+                  result =  await Brand.findOneAndUpdate({_id:folderImageId},{images:newImages},{new:true})
+                }
+                if(req.body.imageFolder === "Categories"){
+                  result =  await Category.findOneAndUpdate({_id:folderImageId},{images:newImages},{new:true})
+                }
+                return displayData(res,200,true,"Image has been successfully uploaded",{result});
+                }
+                
+            await uploadedImageFun(req);
+        }
+        catch(err){
+            return displayError(res,500,false,"Something went Wrong",err)
+
+        }
      }
 }
 

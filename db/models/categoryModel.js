@@ -15,8 +15,7 @@ const categoryModelSchema=new Schema({
         unique:true
     },
     images:[{
-        data:Buffer,
-        contentType: String
+        type:String
     }],
     products:[
     {
