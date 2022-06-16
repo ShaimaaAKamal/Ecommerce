@@ -9,7 +9,7 @@ const S3_BUCKET = process.env.S3_BUCKET;
 
 const uploadImage=async(req,res)=>{
     const s3=new aws.S3();
-    const upload =async ()=>{
+    const upload =async (image)=>{
         let extention=(image.name.split("."))[1];
         let result=  await s3.upload({
            Bucket: 'shopifyallimages',
@@ -18,20 +18,14 @@ const uploadImage=async(req,res)=>{
          }).promise();
          return result
     }
-    console.log('file')
-    console.log(req.file);
-    console.log('files')
-    console.log(req.files);
-    console.log('body')
-    console.log(req.body);
 
-    if (!req.files || !req.file) {
+    if (req.files.length == 0 ) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
       
     const uploadedImageFun= async (req)=>{
-        if (req.files){ for(let image of req.files.images) {let out = upload(); console.log(out)}}
-        else if(req.file) {let out = upload(); console.log(out)}
+        if (req.files){ for(let image of req.files.images) {let out = upload(image); console.log(out)}}
+        else if(req.file) {let out = upload(req.files.images); console.log(out)}
         console.log('done');
         }
     await uploadedImageFun(req);
