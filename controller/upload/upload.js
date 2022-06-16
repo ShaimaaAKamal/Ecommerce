@@ -14,12 +14,13 @@ const uploadImage=async(req,res)=>{
       
     const uploadedImageFun= async (req)=>{
         for(let image of req.files.images){
-            console.log(image);
-            await s3.upload({
+          let result=  await s3.upload({
                 Bucket: 'shopifyallimages',
-                Key: image.name,
+                Key: `${Date.now()}-any-name-${image.name}`,
                 Body:image.data ,
               }).promise()
+
+              console.log(result);
              
         }
         console.log('done');
