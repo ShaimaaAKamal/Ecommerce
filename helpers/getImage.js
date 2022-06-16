@@ -13,4 +13,4 @@ const getImage=(keyName)=>{
 }
 
 
-modyle.exports=getImage;
+module.exports=getImage;
