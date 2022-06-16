@@ -23,7 +23,7 @@ const uploadImage=async(req,res)=>{
     if (!req.files) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
-     else if (req.body.length === 0 || !req.body.imageFolder  || !req.query.folderImageId){
+     else if (req.body.length === 0 || !req.body.imageFolder  || !req.body.folderImageId){
         return displayCustomError(res,400,false,"You Select a Folder Id")
      }
      else{
@@ -34,10 +34,9 @@ const uploadImage=async(req,res)=>{
                 if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image,req.body.imageFolder); Images.push(out);}}
                 else {let out = await upload(req.files.images,req.body.imageFolder); Images.push(out)}
                 let newImages=Images.map(image => image.Location)
-                console.log(ObjectId(req.query.folderImageId));
         
                 if(req.body.imageFolder === "Products"){
-                    console.log(await Product.findById(ObjectId(req.query.folderImageId)).exec())
+                    console.log(await Product.findById(ObjectId(JSON.stringify(req.body.folderImageId))).exec())
                     // result =await Product.findOneAndUpdate({_id:ObjectId(req.body.folderImageId)},{images:newImages})
                     // console.log(result)
                 }
