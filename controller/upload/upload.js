@@ -19,7 +19,7 @@ const uploadImage=async(req,res)=>{
          return result}
          console.log(req.files);
          console.log(req.files.length == 0);
-    if (req.files.length == 0 ) {
+    if (!req.files) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
      else if (req.body.length === 0 || !req.body.imageFolder  || !req.body.folderImageId){
