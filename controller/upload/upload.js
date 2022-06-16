@@ -37,7 +37,7 @@ const uploadImage=async(req,res)=>{
                 console.log(ObjectId(req.body.folderImageId));
         
                 if(req.body.imageFolder === "Products"){
-                    console.log(Product.findOne({_id:ObjectId(req.body.folderImageId)}))
+                    console.log(Product.findOne({_id:ObjectId(req.body.folderImageId)}).exec())
                     result =await Product.findOneAndUpdate({_id:ObjectId(req.body.folderImageId)},{images:newImages})
                     console.log(result)
                 }
