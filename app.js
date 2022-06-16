@@ -11,16 +11,17 @@ const passport=require('passport');
 const passport_authenticate_jwt=require('./middleware/authenticate');
 const isAdmin=require('./middleware/isAdmin')
 const cors= require('cors');
-const getStatistics=require("./controller/statistics/statistics")
-;
+const getStatistics=require("./controller/statistics/statistics");
+const fileupload = require("express-fileupload");
 require('./db/dbConnection');
 require("./passport")(passport);
 app.use(cors());
-app.use(express.static('public'))
 
 app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false}))
+app.use(fileupload());
+
 app.use('/',authRouter);
 app.use('/products',productRouter);
 app.use('/brands',brandRouter);
