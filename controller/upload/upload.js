@@ -7,13 +7,11 @@ const S3_BUCKET = process.env.S3_BUCKET;
 
 const uploadImage=async(req,res)=>{
     const s3=new aws.S3();
-    console.log(req.body)
-    console.log(req.file)
     console.log(req.files);
 
     const uploadedImage = await s3.upload({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: req.files[0].originalFilename,
+        Key: req.files[0].name,
         Body:req.files[0] ,
       }).promise()
     console.log(req.body);
