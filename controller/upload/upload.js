@@ -17,7 +17,8 @@ const uploadImage=async(req,res)=>{
            Body:image.data ,
          }).promise();
          return result}
-
+         console.log(req.files);
+         console.log(req.files.length == 0);
     if (req.files.length == 0 ) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
