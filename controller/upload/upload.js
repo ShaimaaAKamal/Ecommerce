@@ -3,8 +3,7 @@ const {displayCustomError,displayData,displayError}=require("../../helpers/displ
 const Product=require('../../db/models/userModel');
 const Category=require('../../db/models/userModel');
 const Brand=require('../../db/models/userModel');
-var mongoose = require('mongoose');
-
+ObjectId = require('mongodb').ObjectId;;
 
 const aws = require('aws-sdk');
 
@@ -39,7 +38,7 @@ const uploadImage=async(req,res)=>{
                 console.log(newImages);
     
                 if(req.body.imageFolder === "Products"){
-                    result =await Product.findOneAndUpdate({_id: mongoose.Types.ObjectId(req.body.folderImageId)},{images:newImages})
+                    result =await Product.findOneAndUpdate({_id:req.ObjectId(body.folderImageId)},{images:newImages})
                     console.log(result)
                 }
                 else if(req.body.imageFolder === "Brands"){
