@@ -1,28 +1,26 @@
 
 const {displayCustomError,displayData}=require("../../helpers/display");
-const path=require('path');
-const Resize= require("../../helpers/resize");
+// const path=require('path');
+// const Resize= require("../../helpers/resize");
 const aws = require('aws-sdk');
 const S3_BUCKET = process.env.S3_BUCKET;
 
 const uploadImage=async(req,res)=>{
-    // if (req.file === undefined)  r
-    // const imgUrl = `https://shopifyall.herokuapp.com/images/${req.file.filename}`;
-    // return displayData(res,200,true,"Image has been successfullu uploaded",{imgUrl});
+    const s3=new aws.S3();
     console.log(req.files);
+
+    const uploadedImage = await s3.upload({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: req.files[0].originalFilename,
+        Body:req.files[0] ,
+      }).promise()
     console.log(req.body);
 
      if (!req.files) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
 
-    // const imagePath = path.resolve(__dirname, '/public/images');
-    // const fileUpload = new Resize(imagePath);
-    // console.log(imagePath);
    
-    // const filename = await fileUpload.save(req.files.buffer);
-    // console.log(filename);
-    // return displayData(res,200,true,"Image has been successfullu uploaded",{filename});
 }
 
 module.exports=uploadImage;
