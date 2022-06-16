@@ -1,6 +1,5 @@
 const Category=require("../../db/models/categoryModel");
 const Product=require("../../db/models/productModel");
-const getImage=require("../../helpers/getImage");
 const {displayCustomError,displayError,displayData}=require("../../helpers/display");
 
 
@@ -29,7 +28,7 @@ const getSingleCategoryController= async (req,res) =>{
     const id=req.params.categoryId;
     try{
         const category=await Category.findOne({_id:id}).populate({path:'products',select:"productname _id brand qty price availability images description"}).exec();
-        if(category) {let data = await getImage((category.images)[0]); console.log(data);return displayData(res,200,true,"Category has been successfully retrieved",{category});}
+        if(category) {return displayData(res,200,true,"Category has been successfully retrieved",{category});}
         else return displayCustomError(res,404,false,"There are no such a Category exist")
     }catch(err){
         console.log(err);
