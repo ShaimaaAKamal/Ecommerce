@@ -16,7 +16,7 @@ const uploadImage=async(req,res)=>{
         for(let image of req.files.images){
             console.log(image);
             await s3.upload({
-                Bucket: process.env.AWS_S3_BUCKET_NAME,
+                Bucket: 'shopifyallimages',
                 Key: image.name,
                 Body:image.data ,
               }).promise()
