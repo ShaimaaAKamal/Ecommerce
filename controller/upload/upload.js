@@ -38,7 +38,7 @@ const uploadImage=async(req,res)=>{
                 console.log(newImages);
     
                 if(req.body.imageFolder === "Products"){
-                    result =await Product.findOneAndUpdate({_id:req.ObjectId(body.folderImageId)},{images:newImages})
+                    result =await Product.findOneAndUpdate({_id:req.ObjectId(req.body.folderImageId)},{images:newImages})
                     console.log(result)
                 }
                 else if(req.body.imageFolder === "Brands"){
