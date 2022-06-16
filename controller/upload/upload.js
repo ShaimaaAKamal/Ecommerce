@@ -26,10 +26,8 @@ const uploadImage=async(req,res)=>{
     const uploadedImageFun= async (req)=>{
         if (req.files){ for(let image of req.files.images) {let out = upload(); console.log(out)}}
         else if(req.file) {let out = upload(); console.log(out)}
-        }
-     
         console.log('done');
-    } 
+        }
     await uploadedImageFun(req);
 }
 
