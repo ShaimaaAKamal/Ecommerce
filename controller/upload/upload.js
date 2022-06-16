@@ -30,8 +30,8 @@ const uploadImage=async(req,res)=>{
             const uploadedImageFun= async (req)=>{
                 let Images=[];
                 let result;
-                if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image); Images.push(out);}}
-                else {let out = await upload(req.files.images); Images.push(out)}
+                if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image,req.body.imageFolder); Images.push(out);}}
+                else {let out = await upload(req.files.images,req.body.imageFolder); Images.push(out)}
                 let newImages=Images.map(image => image.Location)
     
                 if(req.body.imageFolder === "Products"){
@@ -49,6 +49,7 @@ const uploadImage=async(req,res)=>{
             await uploadedImageFun(req);
         }
         catch(err){
+            console.log(err);
             return displayError(res,500,false,"Something went Wrong",err)
 
         }
