@@ -19,7 +19,9 @@ const uploadImage=async(req,res)=>{
          return result
     }
 
-    if (!req.files || ! req.file) {
+    console.log(req.file);
+
+    if (!req.files || !req.file) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
       
