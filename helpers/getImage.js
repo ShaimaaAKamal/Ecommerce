@@ -1,15 +1,11 @@
 const aws = require('aws-sdk');
 
 
-const getImage=(keyName)=>{
+const getImage=async (keyName)=>{
     const s3=new aws.S3();
-    var params = { Bucket: 'shopifyallimages', Key: keyName}; 
-    s3.getObject(params, function (err, data) {
-        if (err) {
-            return false;
-        }
-          return data;
-    });
+    let params = { Bucket: 'shopifyallimages', Key: keyName}; 
+    const data = await s3.getObject(params).promise()
+    if (data.Body) {return data.Body.toString("utf-8") } else { return undefined}
 }
 
 

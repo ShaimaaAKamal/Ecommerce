@@ -26,7 +26,6 @@ const uploadImage=async(req,res)=>{
                 let result;
                 if (req.files.images.length > 1){ for(let image of req.files.images) {let out = await upload(image,req.body.imageFolder,s3); Images.push(out);}}
                 else {let out = await upload(req.files.images,req.body.imageFolder,s3); Images.push(out)}
-                console.log(Images);
                 let newImages=Images.map(image => image.key)
                 if(req.body.imageFolder === "Products"){
                     result =await Product.findOneAndUpdate({_id:ObjectId(req.body.folderImageId)},{images:newImages},{new:true})
