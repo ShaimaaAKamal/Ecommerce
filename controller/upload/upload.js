@@ -18,7 +18,7 @@ const uploadImage=async(req,res)=>{
             console.log(extention);
           let result=  await s3.upload({
                 Bucket: 'shopifyallimages',
-                Key: `${Date.now()}-shopifyall-.${extention}`,
+                Key: `Brands/${Date.now()}-shopifyall.${extention}`,
                 Body:image.data ,
               }).promise()
 
