@@ -11,10 +11,7 @@ const uploadImage=async(req,res)=>{
     if (!req.files) {
         return displayCustomError(res,400,false,"Please provide  Images to be uploaded.")
      }
-      console.log(req.files);
-      console.log('shaimaa');
-      console.log(req.files.images);
-
+      
     const uploadedImageFun= async (req)=>{
         for(let image of req.files.images){
             console.log(image);
@@ -27,7 +24,7 @@ const uploadImage=async(req,res)=>{
         }
         console.log('done');
     } 
-    uploadedImageFun();
+    await uploadedImageFun(req);
 }
 
 module.exports=uploadImage;
